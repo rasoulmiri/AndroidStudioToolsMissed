@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>androidstudio.tools.missed</id>
+    <name>Android Studio Tools Missed</name>
+    <vendor email="miri.rasoul@gmail.com" url="miri.rasoul@gmail.com">Rasoul Miri</vendor>
+
+    <description>
+        <![CDATA[As an Android developer, we work with Android Studio every day.<br>
+        Android Studio lacks some tools for developers that are added in this plugin.]]>
+    </description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <toolWindow
+                icon="/icons/pluginIcon.svg" id="Android Studio Tools Missed" anchor="right"
+                factoryClass="androidstudio.tools.missed.missedtoolwindow.presenter.MissedToolsWindowView">
+        </toolWindow>
+
+        <notificationGroup id="Android Studio Tools Missed"
+                           displayType="BALLOON"
+                           key="androidstudio.tools.missed.notifications.balloon"/>
+
+    </extensions>
+
+</idea-plugin>
