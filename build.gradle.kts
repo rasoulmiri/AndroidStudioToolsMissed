@@ -1,3 +1,5 @@
+import java.util.*
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
@@ -27,17 +29,13 @@ dependencies {
 }
 
 // Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2022.2.5")
-//    type.set("IC") // Target IDE Platform
-
     plugins.set(listOf("android"))
 }
 
 tasks {
     runIde {
-        // Absolute path to installed target 3.5 Android Studio to use as
         // IDE Development Instance (the "Contents" directory is macOS specific):
         ideDir.set(file("/Applications/Android Studio.app/Contents"))
     }
@@ -45,11 +43,9 @@ tasks {
 
 detekt {
     toolVersion = "1.22.0"
-//    input = files("src/main/kotlin")
     source = files(
         "src/main/kotlin",
         "src/test/java"
-
     )
     config = files("detekt/detekt.yml")
     autoCorrect = true
@@ -57,7 +53,6 @@ detekt {
 
 
 tasks {
-    // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "17"
         targetCompatibility = "17"
@@ -65,19 +60,30 @@ tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
-
     patchPluginXml {
         sinceBuild.set("222")
         untilBuild.set("232.*")
     }
 
     signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        val certificatePasswordFile = File("certificate/CertificatePassword.txt")
+        val properties = Properties()
+        certificatePasswordFile.inputStream().use { inputStream ->
+            properties.load(inputStream)
+        }
+        val certificatePassword: String = properties.getProperty("password").trim()
+        certificateChain.set(System.getenv("/certificate/chain.crt"))
+        privateKey.set(System.getenv("certificate/private.pem"))
+        password.set(certificatePassword)
     }
 
     publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        val intelliJTokenFile = File("certificate/IntelliJToken.txt")
+        val properties = Properties()
+        intelliJTokenFile.inputStream().use { inputStream ->
+            properties.load(inputStream)
+        }
+        val intelliJToken: String = properties.getProperty("password").trim()
+        token.set(System.getenv(intelliJToken))
     }
 }
