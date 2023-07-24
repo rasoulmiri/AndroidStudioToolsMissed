@@ -11,6 +11,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.ui.TextBrowseFolderListener
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.ui.AnimatedIcon
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import kotlinx.coroutines.flow.collect
@@ -50,7 +51,8 @@ class ApkView(
         return panel {
             group(resourceManager.string("downloadApkTitle")) {
                 row {
-                    label(resourceManager.string("apkTitle"))
+                    label(resourceManager.string("apkTitle")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://github")
                 }
 
                 row {
@@ -92,7 +94,8 @@ class ApkView(
         return panel {
             group(resourceManager.string("installApkTitle")) {
                 row {
-                    label(resourceManager.string("installApplicationFromApkFiles"))
+                    label(resourceManager.string("installApplicationFromApkFiles")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://github")
                 }
 
                 row {

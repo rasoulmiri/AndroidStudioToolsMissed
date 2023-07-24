@@ -101,13 +101,6 @@ class BatteryView(
 
     private fun powerSavingModeView(): JPanel {
         return panel {
-            group(resourceManager.string("powerSavingModeTitle")) {
-                row {
-                    label(resourceManager.string("powerSavingModeDescription"))
-                    browserLink(resourceManager.string("moreInformation"), "").component
-                    browserLink(resourceManager.string("demo"), "")
-                }
-
                 row {
                     cell(powerSavingModeLabel).gap(RightGap.SMALL)
                     powerSavingModeComment = comment("")
@@ -120,7 +113,6 @@ class BatteryView(
                         viewModel.resetBatterySetting()
                     }
                 }
-            }
         }
     }
 
