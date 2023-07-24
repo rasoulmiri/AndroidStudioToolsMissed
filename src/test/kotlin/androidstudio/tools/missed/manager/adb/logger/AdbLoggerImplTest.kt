@@ -1,6 +1,6 @@
 package androidstudio.tools.missed.manager.adb.logger
 
-import androidstudio.tools.missed.manager.adb.command.InternetAdbConnectionCommands
+import androidstudio.tools.missed.manager.adb.command.NetworkAdbCommands
 import androidstudio.tools.missed.manager.device.model.DeviceInformation
 import com.android.ddmlib.IDevice
 import io.mockk.mockk
@@ -19,7 +19,7 @@ class AdbLoggerImplTest {
         // Create sample input data
         val mockDevice = mockk<IDevice>(relaxed = true)
         val device = DeviceInformation("Device 1", "Brand", "Model", mockDevice)
-        val adbCommand = InternetAdbConnectionCommands.GetMobileDataState()
+        val adbCommand = NetworkAdbCommands.GetMobileDataState()
         val message = "Success"
         val exception: IOException? = null
 
