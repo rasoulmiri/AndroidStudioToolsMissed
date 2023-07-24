@@ -9,6 +9,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.fields.ExtendableTextComponent
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.ui.dsl.builder.COLUMNS_LARGE
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
@@ -51,7 +52,8 @@ class InputTextView(
     fun textField(): JPanel {
         return panel {
             row {
-                text(resourceManager.string("inputTextDescription") + "<icon src='AllIcons.General.Information'>")
+                text(resourceManager.string("inputTextDescription")).gap(RightGap.SMALL)
+                browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Input-Tools")
             }
 
             row {

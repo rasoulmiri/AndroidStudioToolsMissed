@@ -5,7 +5,7 @@ import androidstudio.tools.missed.features.battery.di.batteryModule
 import androidstudio.tools.missed.features.deviceAndpackageid.di.deviceAndPackageIdsModule
 import androidstudio.tools.missed.features.dozeandstandby.di.dozeAndStandbyModule
 import androidstudio.tools.missed.features.input.di.inputModule
-import androidstudio.tools.missed.features.internetconnection.di.internetConnectionModule
+import androidstudio.tools.missed.features.network.di.networkModule
 import androidstudio.tools.missed.features.permission.di.permissionModule
 import androidstudio.tools.missed.manager.adb.di.adbManagerModule
 import androidstudio.tools.missed.manager.device.di.deviceManagerModule
@@ -32,7 +32,7 @@ class DependencyInjectionInjectionManagerImpl : KoinComponent, DependencyInjecti
                     deviceManagerModule +
                     deviceAndPackageIdsModule +
                     inputModule +
-                    internetConnectionModule +
+                    networkModule +
                     permissionModule +
                     apkModule +
                     batteryModule +

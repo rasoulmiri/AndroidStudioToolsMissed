@@ -13,6 +13,7 @@ import androidstudio.tools.missed.utils.FONT_COMMENT_SIZE
 import com.intellij.icons.AllIcons
 import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.JBColor
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.panel
 import kotlinx.coroutines.flow.collect
@@ -64,7 +65,8 @@ class PermissionView(
         return panel {
             group(resourceManager.string("permissionsSingleTitle")) {
                 row {
-                    label(resourceManager.string("permissionsSingleDescription"))
+                    label(resourceManager.string("permissionsSingleDescription")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
                 }
 
                 row {
@@ -122,8 +124,8 @@ class PermissionView(
         return panel {
             group(resourceManager.string("permissionsAllTitle")) {
                 row {
-                    label(resourceManager.string("permissionsAllDescription"))
-                    browserLink(resourceManager.string("demo"), "")
+                    label(resourceManager.string("permissionsAllDescription")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
                 }
                 row {
                     grantAllButton = button(resourceManager.string("grantAllPermissions")) {

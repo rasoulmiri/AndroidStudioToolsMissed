@@ -9,6 +9,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.OnOffButton
 import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.panel
 import kotlinx.coroutines.flow.collect
@@ -76,9 +77,8 @@ class DozeAndStandbyView(
         return panel {
             group(resourceManager.string("doze")) {
                 row {
-                    label(resourceManager.string("dozeDescription"))
-                    browserLink(resourceManager.string("moreInformation"), "").component
-                    browserLink(resourceManager.string("demo"), "").component
+                    label(resourceManager.string("dozeDescription")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby#understand_doze")
                 }
 
                 row {
@@ -101,9 +101,8 @@ class DozeAndStandbyView(
         return panel {
             group(resourceManager.string("standby")) {
                 row {
-                    label(resourceManager.string("standbyDescription"))
-                    browserLink(resourceManager.string("moreInformation"), "").component
-                    browserLink(resourceManager.string("demo"), "").component
+                    label(resourceManager.string("standbyDescription")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby#understand_app_standby")
                 }
 
                 row {
@@ -124,9 +123,8 @@ class DozeAndStandbyView(
         return panel {
             group(resourceManager.string("whiteListTitle")) {
                 row {
-                    label(resourceManager.string("whiteListDescription"))
-                    browserLink(resourceManager.string("moreInformation"), "").component
-                    browserLink(resourceManager.string("demo"), "").component
+                    label(resourceManager.string("whiteListDescription")).gap(RightGap.SMALL)
+                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby")
                 }
 
                 row {
