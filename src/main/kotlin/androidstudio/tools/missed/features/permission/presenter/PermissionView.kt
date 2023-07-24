@@ -66,7 +66,7 @@ class PermissionView(
             group(resourceManager.string("permissionsSingleTitle")) {
                 row {
                     label(resourceManager.string("permissionsSingleDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github")
+                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
                 }
 
                 row {
@@ -125,7 +125,7 @@ class PermissionView(
             group(resourceManager.string("permissionsAllTitle")) {
                 row {
                     label(resourceManager.string("permissionsAllDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github")
+                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
                 }
                 row {
                     grantAllButton = button(resourceManager.string("grantAllPermissions")) {

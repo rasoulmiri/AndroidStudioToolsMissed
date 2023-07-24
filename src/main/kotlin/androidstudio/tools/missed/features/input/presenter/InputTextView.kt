@@ -53,7 +53,7 @@ class InputTextView(
         return panel {
             row {
                 text(resourceManager.string("inputTextDescription")).gap(RightGap.SMALL)
-                browserLink(resourceManager.string("help"), "https://github")
+                browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Input-Tools")
             }
 
             row {
