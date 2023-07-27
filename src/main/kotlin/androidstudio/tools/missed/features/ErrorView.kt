@@ -1,6 +1,8 @@
 package androidstudio.tools.missed.features
 
 import androidstudio.tools.missed.manager.resource.ResourceManager
+import androidstudio.tools.missed.utils.DELAY_MEDIUM
+import androidstudio.tools.missed.utils.DisabledIcon
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.AnimatedIcon
@@ -18,7 +20,11 @@ class ErrorView(private val resourceManager: ResourceManager, private val onRetr
         // label
         val descriptionLabel = JLabel(
             resourceManager.string("InitialPluginError"),
-            AnimatedIcon.Blinking(AllIcons.General.BalloonError),
+            AnimatedIcon(
+                DELAY_MEDIUM.toInt(),
+                AllIcons.General.BalloonError,
+                DisabledIcon(AllIcons.General.BalloonError)
+            ),
             SwingConstants.CENTER
         )
         panel.add(descriptionLabel)
