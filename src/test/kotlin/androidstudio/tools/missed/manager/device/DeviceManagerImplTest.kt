@@ -108,8 +108,7 @@ class DeviceManagerImplTest {
     fun `getDeviceSelectedName should return the concatenated brand and model of the selected device`() = runTest {
         // Arrange
         val mockDeviceInformation = mockk<DeviceInformation>(relaxed = true)
-        every { mockDeviceInformation.brand } returns "Samsung"
-        every { mockDeviceInformation.model } returns "Galaxy S10"
+        every { mockDeviceInformation.name } returns "Samsung Galaxy S10"
         deviceManager.setSelectedDevice(mockDeviceInformation)
 
         // Act

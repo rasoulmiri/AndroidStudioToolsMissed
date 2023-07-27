@@ -15,10 +15,10 @@ class AdbLoggerImpl : AdbLogger {
         println(
             "\nExecuteShellCommand ____________________________________________________________________________" +
                 "\nDevice  = ${
-                if (device?.title == "Unknow") {
+                if (device?.name == "Unknow") {
                     device.iDevice.serialNumber
                 } else {
-                    device?.title?.replace("\n", "")
+                    device?.name?.replace("\n", "")
                 }
                 }\nCommandName = ${adbCommand::class.java.simpleName}\n    ${adbCommand.command} \nResult  = ${
                 message.ifEmpty {
