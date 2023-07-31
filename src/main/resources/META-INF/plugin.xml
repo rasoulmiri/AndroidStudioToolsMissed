@@ -4,8 +4,39 @@
     <vendor email="miri.rasoul@gmail.com" url="miri.rasoul@gmail.com">Rasoul Miri</vendor>
 
     <description>
-        <![CDATA[As an Android developer, we work with Android Studio every day.<br>
-        Android Studio lacks some tools for developers that are added in this plugin.]]>
+        <![CDATA[<p>You can use AndroidStudioToolsMissed plugin during the development of Android applications, such as granting and revoking all permissions and activating and deactivating Wi-Fi, cellular mobile, Bluetooth, or Airplane mode
+<br>You can also set the Doze mode, Standby, and whitelist, or you can simulate the battery settings.</p>
+<p><strong style="color: blue;">All these features are available for emulators and real Android devices.</strong></p>
+
+<strong>Features:</strong>
+<ul>
+  <li><strong>Network</strong>
+    <ul>
+      <li>Airplane Mode</li>
+      <li>Mobile Cellular</li>
+      <li>Wifi Connection</li>
+      <li>Bluetooth</li>
+    </ul>
+  </li>
+  <li><strong>Input Text:</strong> You can send your text to an Android device.</li>
+  <li><strong>Permissions:</strong> You can grant or revoke permission or all permissions for an application.</li>
+  <li><strong>APK:</strong> Get Apk from which is installed on your device or install APK on a device.</li>
+  <li><strong>Limitation Modes</strong>
+    <ul>
+      <li>Doze Mode</li>
+      <li>Standby</li>
+      <li>WhiteList</li>
+    </ul>
+  </li>
+  <li><strong>Battery</strong>
+  <ul>
+  <li>Charger Connection</li>
+  <li>Battery Level</li>
+  <li>Power Saving Mode</li>
+   </ul>
+  </li>
+</ul>
+]]>
     </description>
 
     <depends>com.intellij.modules.platform</depends>
@@ -15,7 +46,7 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <toolWindow
-                icon="/icons/pluginIcon.svg" id="Android Studio Tools Missed" anchor="right"
+                icon="/icons/pluginIcon.svg" id="Android Studio Tools Missed" anchor="left"
                 factoryClass="androidstudio.tools.missed.missedtoolwindow.presenter.MissedToolsWindowView">
         </toolWindow>
 

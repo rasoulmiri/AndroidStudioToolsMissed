@@ -18,7 +18,7 @@ class AdbLoggerImplTest {
 
         // Create sample input data
         val mockDevice = mockk<IDevice>(relaxed = true)
-        val device = DeviceInformation("Device 1", "Brand", "Model", mockDevice)
+        val device = DeviceInformation("Device 1", mockDevice)
         val adbCommand = NetworkAdbCommands.GetMobileDataState()
         val message = "Success"
         val exception: IOException? = null

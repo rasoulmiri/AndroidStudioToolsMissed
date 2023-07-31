@@ -1,6 +1,8 @@
 package androidstudio.tools.missed.features
 
 import androidstudio.tools.missed.manager.resource.ResourceManager
+import androidstudio.tools.missed.utils.DELAY_MEDIUM
+import androidstudio.tools.missed.utils.DisabledIcon
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.IconLoader
@@ -20,9 +22,14 @@ class NeedToConnectDeviceView(
         val panel = JPanel(VerticalFlowLayout(VerticalFlowLayout.CENTER, true, false))
 
         // label
+        val androidDeviceIcon = IconLoader.getIcon("/icons/androidDevice/androidDevice.svg", javaClass)
         val descriptionLabel = JLabel(
             resourceManager.string("needToConnectDeviceDescription"),
-            AnimatedIcon.Blinking(IconLoader.getIcon("/icons/androidDevice/androidDevice.svg", javaClass)),
+            AnimatedIcon(
+                DELAY_MEDIUM.toInt(),
+                androidDeviceIcon,
+                DisabledIcon(androidDeviceIcon)
+            ),
             SwingConstants.CENTER
         )
         panel.add(descriptionLabel)

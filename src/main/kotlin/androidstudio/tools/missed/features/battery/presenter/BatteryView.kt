@@ -3,6 +3,7 @@ package androidstudio.tools.missed.features.battery.presenter
 import androidstudio.tools.missed.base.CollapsibleGroupView
 import androidstudio.tools.missed.manager.notification.NotificationManager
 import androidstudio.tools.missed.manager.resource.ResourceManager
+import androidstudio.tools.missed.utils.DIMENSION_3
 import androidstudio.tools.missed.utils.debounce
 import com.intellij.ui.JBIntSpinner
 import com.intellij.ui.components.OnOffButton
@@ -13,6 +14,7 @@ import com.intellij.ui.dsl.builder.panel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.awt.Dimension
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 import javax.swing.JEditorPane
@@ -69,8 +71,7 @@ class BatteryView(
     init {
         setContent(
             title = resourceManager.string("batteryTitle"),
-            batteryDetailView(),
-            powerSavingModeView()
+            batteryDetailView()
         )
     }
 
@@ -85,6 +86,9 @@ class BatteryView(
             row {
                 cell(chargerConnectionLabel).gap(RightGap.SMALL)
                 chargerConnectionComment = comment("")
+                chargerConnectionComment.component.apply {
+                    preferredSize = Dimension(DIMENSION_3, chargerConnectionLabel.preferredSize.height)
+                }
                 cell(chargerConnectionButton).gap(RightGap.COLUMNS)
                 chargerConnectionButton.addItemListener(chargerConnectionButtonItemListener)
             }.layout(RowLayout.PARENT_GRID)
@@ -96,23 +100,19 @@ class BatteryView(
                 batteryLevelSpinner.addChangeListener(batteryLevelSpinnerChangeListener)
                 cell(batteryLevelSpinner)
             }.layout(RowLayout.PARENT_GRID)
-        }
-    }
 
-    private fun powerSavingModeView(): JPanel {
-        return panel {
-                row {
-                    cell(powerSavingModeLabel).gap(RightGap.SMALL)
-                    powerSavingModeComment = comment("")
-                    cell(powerSavingModeButton)
-                    powerSavingModeButton.addItemListener(powerSavingModeButtonItemListener)
-                }
+            row {
+                cell(powerSavingModeLabel).gap(RightGap.SMALL)
+                powerSavingModeComment = comment("").widthGroup("GroupName")
+                cell(powerSavingModeButton)
+                powerSavingModeButton.addItemListener(powerSavingModeButtonItemListener)
+            }.layout(RowLayout.PARENT_GRID)
 
-                row {
-                    button(resourceManager.string("resetBatterySetting")) {
-                        viewModel.resetBatterySetting()
-                    }
+            row {
+                button(resourceManager.string("resetBatterySetting")) {
+                    viewModel.resetBatterySetting()
                 }
+            }.layout(RowLayout.PARENT_GRID)
         }
     }
 

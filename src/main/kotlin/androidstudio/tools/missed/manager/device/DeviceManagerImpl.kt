@@ -82,8 +82,7 @@ class DeviceManagerImpl(
         _packageIdSelectedStateFlow.emit(null)
     }
 
-    override fun getDeviceSelectedName(): String =
-        "${_selectedDeviceStateFlow.value?.brand} ${_selectedDeviceStateFlow.value?.model}"
+    override fun getDeviceSelectedName(): String? = _selectedDeviceStateFlow.value?.name
 
     override suspend fun executeShellCommand(adbCommand: AdbCommand): Result<String> {
         if (adbCommand.isNeedDevice && (_selectedDeviceStateFlow.value == null || _devicesStateFlow.value.isEmpty())) {

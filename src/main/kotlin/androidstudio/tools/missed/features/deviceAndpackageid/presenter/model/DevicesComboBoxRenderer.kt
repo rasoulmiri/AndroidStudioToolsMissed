@@ -18,8 +18,8 @@ internal class DevicesComboBoxRenderer(private val placeHolder: String) : JLabel
         text = if (index == -1 && value == null) {
             placeHolder
         } else {
-            if ((value as? DeviceInformation)?.title != null) {
-                (value as? DeviceInformation)?.title
+            if ((value as? DeviceInformation)?.name != null) {
+                (value as? DeviceInformation)?.name
             } else {
                 value.toString()
             }

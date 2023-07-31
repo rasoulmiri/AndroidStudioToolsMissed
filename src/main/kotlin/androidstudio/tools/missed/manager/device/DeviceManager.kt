@@ -17,5 +17,5 @@ interface DeviceManager {
     suspend fun pullFile(remoteFilepath: String, localFilePath: String): Result<String>
     suspend fun setSelectedDevice(device: DeviceInformation?)
     suspend fun setSelectedPackageId(packageId: String?)
-    fun getDeviceSelectedName(): String
+    fun getDeviceSelectedName(): String?
 }

@@ -3,12 +3,12 @@ import java.util.*
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
-    id("org.jetbrains.intellij") version "1.13.3"
+    id("org.jetbrains.intellij") version "1.15.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
 
 group = "com.androidstudiotoolsmissed"
-version = "1.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -83,7 +83,7 @@ tasks {
         intelliJTokenFile.inputStream().use { inputStream ->
             properties.load(inputStream)
         }
-        val intelliJToken: String = properties.getProperty("password").trim()
+        val intelliJToken: String = properties.getProperty("token").trim()
         token.set(System.getenv(intelliJToken))
     }
 }

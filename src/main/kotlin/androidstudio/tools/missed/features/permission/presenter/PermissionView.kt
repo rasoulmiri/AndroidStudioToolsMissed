@@ -66,7 +66,10 @@ class PermissionView(
             group(resourceManager.string("permissionsSingleTitle")) {
                 row {
                     label(resourceManager.string("permissionsSingleDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools"
+                    )
                 }
 
                 row {
@@ -125,7 +128,10 @@ class PermissionView(
             group(resourceManager.string("permissionsAllTitle")) {
                 row {
                     label(resourceManager.string("permissionsAllDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Permissions-Tools"
+                    )
                 }
                 row {
                     grantAllButton = button(resourceManager.string("grantAllPermissions")) {
@@ -136,7 +142,7 @@ class PermissionView(
                             }
                         }
                     }.component.apply {
-                        preferredSize = Dimension(DIMENSION_6, preferredSize.height) // Set your preferred button size
+                        preferredSize = Dimension(DIMENSION_6, preferredSize.height)
                     }
 
                     restartApplicationGrantCheckBox = checkBox(resourceManager.string("restartApplication")).component
@@ -152,7 +158,7 @@ class PermissionView(
                             }
                         }
                     }.component.apply {
-                        preferredSize = Dimension(DIMENSION_6, preferredSize.height) // Set your preferred button size
+                        preferredSize = Dimension(DIMENSION_6, preferredSize.height)
                     }
                     restartApplicationRevokeCheckBox = checkBox(resourceManager.string("restartApplication")).component
                     restartApplicationRevokeCheckBox.toolTipText = resourceManager.string("revokeAllPermissionsHint")

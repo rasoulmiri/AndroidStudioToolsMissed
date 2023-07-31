@@ -3,27 +3,19 @@ package androidstudio.tools.missed.manager.device.model
 import com.android.ddmlib.IDevice
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
-class DeviceInformation(var title: String, var brand: String, var model: String, val iDevice: IDevice)
+class DeviceInformation(var name: String, val iDevice: IDevice)
 
 fun IDevice.toDeviceInformation(): DeviceInformation {
-    val deviceInformation = DeviceInformation(title = "Unknow", brand = "", model = "", iDevice = this)
+    val deviceInformation = DeviceInformation(name = "Unknow", iDevice = this)
 
-    var brand = ""
-    var model = ""
-    val title: String
-
-    if (this.isEmulator) {
-        brand = this.avdName?.replace("_", " ").orEmpty().trim().toUpperCaseAsciiOnly()
-        model = ""
-        title = "$brand [${this.serialNumber}]"
+    val name = if (this.isEmulator) {
+        this.name?.replace("_", " ").toString()
     } else {
-        brand = deviceInformation.iDevice.getProperty("ro.product.brand").trim().toUpperCaseAsciiOnly()
-        model = deviceInformation.iDevice.getProperty("ro.product.model").trim().toUpperCaseAsciiOnly()
-        title = "$brand $model [${this.serialNumber}]"
+        val brand = deviceInformation.iDevice.getProperty("ro.product.brand").trim().toUpperCaseAsciiOnly()
+        val model = deviceInformation.iDevice.getProperty("ro.product.model").trim().toUpperCaseAsciiOnly()
+        "$brand $model [${this.serialNumber}]"
     }
-    deviceInformation.title = title
-    deviceInformation.brand = brand
-    deviceInformation.model = model
+    deviceInformation.name = name
 
     return deviceInformation
 }

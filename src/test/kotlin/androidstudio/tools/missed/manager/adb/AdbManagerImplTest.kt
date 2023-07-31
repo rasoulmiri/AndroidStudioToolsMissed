@@ -108,8 +108,8 @@ class AdbManagerImplTest {
         // Assert
         assert(result.isSuccess)
         assert(result.getOrNull()?.size == 2)
-        assert(result.getOrNull()?.get(0)?.title == "BRAND1 MODEL1 [1]")
-        assert(result.getOrNull()?.get(1)?.title == "BRAND3 MODEL3 [3]")
+        assert(result.getOrNull()?.get(0)?.name == "BRAND1 MODEL1 [1]")
+        assert(result.getOrNull()?.get(1)?.name == "BRAND3 MODEL3 [3]")
         verify(exactly = 1) { mockADB.devices }
         verify(exactly = 1) { mockDevice1.isOnline }
         verify(exactly = 1) { mockDevice2.isOnline }
