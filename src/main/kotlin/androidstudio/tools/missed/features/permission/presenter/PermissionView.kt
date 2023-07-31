@@ -136,7 +136,7 @@ class PermissionView(
                             }
                         }
                     }.component.apply {
-                        preferredSize = Dimension(DIMENSION_6, preferredSize.height) // Set your preferred button size
+                        preferredSize = Dimension(DIMENSION_6, preferredSize.height)
                     }
 
                     restartApplicationGrantCheckBox = checkBox(resourceManager.string("restartApplication")).component
@@ -152,7 +152,7 @@ class PermissionView(
                             }
                         }
                     }.component.apply {
-                        preferredSize = Dimension(DIMENSION_6, preferredSize.height) // Set your preferred button size
+                        preferredSize = Dimension(DIMENSION_6, preferredSize.height)
                     }
                     restartApplicationRevokeCheckBox = checkBox(resourceManager.string("restartApplication")).component
                     restartApplicationRevokeCheckBox.toolTipText = resourceManager.string("revokeAllPermissionsHint")
