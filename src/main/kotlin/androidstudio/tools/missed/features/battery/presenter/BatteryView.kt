@@ -71,7 +71,7 @@ class BatteryView(
     init {
         setContent(
             title = resourceManager.string("batteryTitle"),
-            batteryDetailView(),
+            batteryDetailView()
         )
     }
 

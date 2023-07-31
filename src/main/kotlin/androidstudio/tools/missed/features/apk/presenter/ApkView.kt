@@ -52,7 +52,10 @@ class ApkView(
             group(resourceManager.string("downloadApkTitle")) {
                 row {
                     label(resourceManager.string("apkTitle")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/APK-Tools")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/APK-Tools"
+                    )
                 }
 
                 row {
@@ -95,7 +98,10 @@ class ApkView(
             group(resourceManager.string("installApkTitle")) {
                 row {
                     label(resourceManager.string("installApplicationFromApkFiles")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/APK-Tools")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/APK-Tools"
+                    )
                 }
 
                 row {

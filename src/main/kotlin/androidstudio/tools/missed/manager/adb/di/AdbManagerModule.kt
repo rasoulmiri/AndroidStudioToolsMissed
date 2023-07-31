@@ -8,6 +8,7 @@ import com.android.ddmlib.AndroidDebugBridge
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 
+@Suppress("MagicNumber")
 val adbManagerModule = module {
     single<AndroidDebugBridge> { AndroidDebugBridge.createBridge(10, TimeUnit.SECONDS) }
     single<AdbLogger> { AdbLoggerImpl() }

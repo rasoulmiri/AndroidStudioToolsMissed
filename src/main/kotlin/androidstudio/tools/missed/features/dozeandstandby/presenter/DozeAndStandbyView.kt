@@ -78,7 +78,10 @@ class DozeAndStandbyView(
             group(resourceManager.string("doze")) {
                 row {
                     label(resourceManager.string("dozeDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby#understand_doze")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://developer.android.com/training/monitoring-device-state/doze-standby#understand_doze"
+                    )
                 }
 
                 row {
@@ -102,7 +105,11 @@ class DozeAndStandbyView(
             group(resourceManager.string("standby")) {
                 row {
                     label(resourceManager.string("standbyDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby#understand_app_standby")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://developer.android.com/" +
+                            "training/monitoring-device-state/doze-standby#understand_app_standby"
+                    )
                 }
 
                 row {
@@ -124,7 +131,10 @@ class DozeAndStandbyView(
             group(resourceManager.string("whiteListTitle")) {
                 row {
                     label(resourceManager.string("whiteListDescription")).gap(RightGap.SMALL)
-                    browserLink(resourceManager.string("help"), "https://developer.android.com/training/monitoring-device-state/doze-standby")
+                    browserLink(
+                        resourceManager.string("help"),
+                        "https://developer.android.com/training/monitoring-device-state/doze-standby"
+                    )
                 }
 
                 row {

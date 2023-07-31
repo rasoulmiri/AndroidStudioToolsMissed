@@ -22,7 +22,7 @@ class NeedToConnectDeviceView(
         val panel = JPanel(VerticalFlowLayout(VerticalFlowLayout.CENTER, true, false))
 
         // label
-        val androidDeviceIcon =IconLoader.getIcon("/icons/androidDevice/androidDevice.svg", javaClass)
+        val androidDeviceIcon = IconLoader.getIcon("/icons/androidDevice/androidDevice.svg", javaClass)
         val descriptionLabel = JLabel(
             resourceManager.string("needToConnectDeviceDescription"),
             AnimatedIcon(

@@ -14,11 +14,7 @@ class DisabledIcon(private val originalIcon: Icon, private val transparency: Flo
         g2d.dispose()
     }
 
-    override fun getIconWidth(): Int {
-        return originalIcon.iconWidth
-    }
+    override fun getIconWidth() = originalIcon.iconWidth
 
-    override fun getIconHeight(): Int {
-        return originalIcon.iconHeight
-    }
+    override fun getIconHeight() = originalIcon.iconHeight
 }
