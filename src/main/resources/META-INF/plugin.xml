@@ -46,7 +46,7 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <toolWindow
-                icon="/icons/pluginIcon.svg" id="Android Studio Tools Missed" anchor="right"
+                icon="/icons/pluginIcon.svg" id="Android Studio Tools Missed" anchor="left"
                 factoryClass="androidstudio.tools.missed.missedtoolwindow.presenter.MissedToolsWindowView">
         </toolWindow>
 
