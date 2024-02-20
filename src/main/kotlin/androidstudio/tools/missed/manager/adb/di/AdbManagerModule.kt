@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("MagicNumber")
 val adbManagerModule = module {
-    single<AndroidDebugBridge> { AndroidDebugBridge.createBridge(10, TimeUnit.SECONDS) }
+    single<AndroidDebugBridge> { AndroidDebugBridge.createBridge(10000, TimeUnit.SECONDS) }
     single<AdbLogger> { AdbLoggerImpl() }
     single<AdbManager> { AdbManagerImpl(get(), get(), get()) }
 }

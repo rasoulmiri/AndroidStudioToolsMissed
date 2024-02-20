@@ -18,7 +18,7 @@ import org.koin.dsl.module
 
 val permissionModule = module {
     single<RestartAppUseCase> { RestartAppUseCaseImpl(get()) }
-    single<FetchAllPermissionsUseCase> { FetchAllPermissionsUseCaseImpl(get(), get()) }
+    single<FetchAllPermissionsUseCase> { FetchAllPermissionsUseCaseImpl(get()) }
     single<GrantPermissionUseCase> { GrantPermissionUseCaseImpl(get(), get()) }
     single<RevokePermissionUseCase> { RevokePermissionUseCaseImpl(get(), get()) }
     single<GrantAllPermissionUseCase> { GrantAllPermissionUseCaseImpl(get(), get(), get(), get()) }
