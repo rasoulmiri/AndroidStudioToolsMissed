@@ -28,4 +28,11 @@ class DeviceAdbCommands {
         isNeedPackageId = false,
         successResult = SuccessResultEnum.NOT_EMPTY
     )
+
+    class PackageVerifierEnable : AdbCommand(
+        command = "settings put global package_verifier_enable 0\n",
+        isNeedDevice = true,
+        isNeedPackageId = false,
+        successResult = SuccessResultEnum.EMPTY
+    )
 }

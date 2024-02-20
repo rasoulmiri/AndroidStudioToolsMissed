@@ -47,7 +47,7 @@ sealed class AdbCommand(
     )
 
     class ClearEditText : AdbCommand(
-        command = "input keycombination 113 29 && input keyevent 67",
+        command = "input keyevent --longpress \$(for i in `seq 1 30`; do echo KEYCODE_DEL; done)",
         isNeedDevice = true,
         isNeedPackageId = false
     )

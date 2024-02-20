@@ -30,7 +30,7 @@ class AdbManagerImpl(
 
     companion object {
         private const val MAX_TRIALS = 10
-        private const val INITIAL_ADB_DELAY_MS = 50L
+        private const val INITIAL_ADB_DELAY_MS = 100L
         private const val INITIAL_ADB_RETRY_DELAY_MS = 1000L
     }
 

@@ -3,11 +3,9 @@ package androidstudio.tools.missed.features.permission.domain.usecase.fetchall
 import androidstudio.tools.missed.features.permission.domain.usecase.entity.PermissionStateModel
 import androidstudio.tools.missed.manager.adb.command.PermissionAdbCommands
 import androidstudio.tools.missed.manager.device.DeviceManager
-import androidstudio.tools.missed.manager.resource.ResourceManager
 import kotlinx.coroutines.flow.flow
 
 class FetchAllPermissionsUseCaseImpl(
-    private val resourceManager: ResourceManager,
     private val deviceManager: DeviceManager
 ) : FetchAllPermissionsUseCase {
 
@@ -16,7 +14,6 @@ class FetchAllPermissionsUseCaseImpl(
 
         packageId.let {
             val allRuntimePermissionDeviceSupported = getAllRuntimePermissionDeviceSupported()
-
             deviceManager.executeShellCommand(
                 PermissionAdbCommands.AllPermissionInPackageIdInstalled(packageId)
             ).onSuccess { result ->
@@ -28,61 +25,98 @@ class FetchAllPermissionsUseCaseImpl(
         }
     }
 
-    private suspend fun getAllRuntimePermissionDeviceSupported(): Result<ArrayList<String>> {
+    private suspend fun getAllRuntimePermissionDeviceSupported(): ArrayList<String> {
         val allRuntimePermissionDeviceSupported = deviceManager.executeShellCommand(
             PermissionAdbCommands.AllRuntimePermissionDeviceSupported()
         )
-
-        return if (allRuntimePermissionDeviceSupported.isSuccess) {
-            val array = ArrayList<String>()
-            allRuntimePermissionDeviceSupported.getOrNull()?.split("\n")?.let { array.addAll(it) }
-            Result.success(array)
-        } else {
-            Result.failure(
-                allRuntimePermissionDeviceSupported.exceptionOrNull()
-                    ?: Exception(resourceManager.string("failedToGetPermissions"))
-            )
+        val array = ArrayList<String>()
+        if (allRuntimePermissionDeviceSupported.isSuccess) {
+            allRuntimePermissionDeviceSupported
+                .getOrNull()?.split("\n")?.let { permissionsText ->
+                    permissionsText.forEach {
+                        array.add(it.trim())
+                    }
+                }
         }
+        return array
     }
 
     @Suppress("ExpressionBodySyntax")
     private fun processPermissionResult(
         result: String,
-        allRuntimePermissionInDevice: Result<ArrayList<String>>
+        allRuntimePermissionDeviceSupported: ArrayList<String>
     ): ArrayList<PermissionStateModel> {
         // Sample result
-        // android.permission.WAKE_LOCK: granted=false
-        // android.permission.CAMERA: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        // requested permissions:
+        // android.permission.FOREGROUND_SERVICE
+        // android.permission.INTERNET
+        // android.permission.CAMERA
+        // ...
+        // ...
+        // install permissions:
+        // android.permission.NFC: granted=true
+        // android.permission.INTERNET: granted=true
+        // android.permission.BLUETOOTH_ADMIN: granted=true
+        // gids=[3002, 3003, 3001]
+        // runtime permissions:
+        // android.permission.ACCESS_FINE_LOCATION: granted=true
+        // android.permission.CAMERA: granted=true
+        // disabledComponents:
+        // ...
+        // enabledComponents:
+        // ...
+        // mSkippingApks:
 
-        val permissions = ArrayList<PermissionStateModel>()
+        val requestedPermissions = result
+            .substringAfter("requested permissions:")
+            .substringBefore("install permissions:")
+            .trim()
+            .split("\n")
+            .map { line ->
+                val isRuntime = allRuntimePermissionDeviceSupported.any { it.trim() == line.trim() }
+                PermissionStateModel(name = line.trim(), isGranted = false, isRuntime = isRuntime)
+            }
+            .toCollection(ArrayList())
 
-        result.split("\n").reversed().forEach { line ->
-            val permissionArray = line.split(":")
+        val installPermissions = result
+            .substringAfter("install permissions:")
+            .substringBefore("runtime permissions:")
+            .split("\n")
+            .filter { it.contains("granted=") }
+            .map { line ->
+                val (permissionName, isGranted) = line.split(":")
+                PermissionStateModel(
+                    name = permissionName.trim() ?: "-",
+                    isGranted = isGranted.contains("granted=true"),
+                    isRuntime = false
+                )
+            }
+            .toCollection(ArrayList())
 
-            if (permissionArray.getOrNull(0)?.isNotEmpty() == true &&
-                permissionArray.getOrNull(1)?.isNotEmpty() == true &&
-                permissionArray.getOrNull(1)?.contains("granted=") == true
-            ) {
-                val permissionName = permissionArray.getOrNull(0)
-                var isRunTimePermission = false
+        val runtimePermissions = result
+            .substringAfter("runtime permissions:")
+            .substringBefore("mSkippingApks:")
+            .split("\n")
+            .filter { it.contains("granted=") }
+            .map { line ->
+                val (permissionName, isGranted) = line.split(":")
+                PermissionStateModel(
+                    name = permissionName.trim() ?: "-",
+                    isGranted = isGranted.contains("granted=true"),
+                    isRuntime = true
+                )
+            }
+            .toCollection(ArrayList())
 
-                allRuntimePermissionInDevice.onSuccess { runtimePermissions ->
-                    if (permissionName in runtimePermissions) {
-                        isRunTimePermission = true
-                    }
-
-                    permissions.add(
-                        PermissionStateModel(
-                            name = permissionName ?: "-",
-                            isGranted = permissionArray.getOrNull(1)?.contains("granted=true") ?: false,
-                            isRuntime = isRunTimePermission
-                        )
-                    )
-                }.onFailure {
-                    throw Throwable(it.message)
-                }
+        requestedPermissions.forEachIndexed { index, permission ->
+            installPermissions.find { it.name == permission.name }?.let {
+                requestedPermissions[index] = it
+            }
+            runtimePermissions.find { it.name == permission.name }?.let {
+                requestedPermissions[index] = it
             }
         }
-        return permissions
+
+        return requestedPermissions
     }
 }
