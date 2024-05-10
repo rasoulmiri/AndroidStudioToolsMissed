@@ -1,98 +1,109 @@
 package androidstudio.tools.missed.manager.adb
 
 import androidstudio.tools.missed.manager.adb.command.AdbCommand
+import androidstudio.tools.missed.manager.adb.command.DeviceAdbCommands
 import androidstudio.tools.missed.manager.adb.command.SuccessResultEnum
 import androidstudio.tools.missed.manager.adb.logger.AdbLogger
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
-import androidstudio.tools.missed.manager.device.model.toDeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.resource.ResourceManager
-import androidstudio.tools.missed.utils.DELAY_MEDIUM
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
-import com.android.ddmlib.IShellOutputReceiver
-import com.android.ddmlib.SyncException
-import com.android.ddmlib.SyncService
-import com.android.ddmlib.TimeoutException
+import com.intellij.openapi.project.ProjectManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import org.gradle.internal.impldep.org.jetbrains.annotations.VisibleForTesting
+import org.jetbrains.android.sdk.AndroidSdkUtils
+import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import kotlin.Result.Companion.failure
+import kotlin.Result.Companion.success
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class AdbManagerImpl(
     private val resourceManager: ResourceManager,
-    private val androidDebugBridge: AndroidDebugBridge,
     private val adbLogger: AdbLogger
 ) : AdbManager {
 
-    companion object {
-        private const val MAX_TRIALS = 10
-        private const val INITIAL_ADB_DELAY_MS = 100L
-        private const val INITIAL_ADB_RETRY_DELAY_MS = 1000L
-    }
-
+    private var adbPath: String? = null
     private var adbIsConnect: Boolean = false
 
     @Suppress("TooGenericExceptionCaught")
     override suspend fun initialAdb(): Result<Boolean> {
-        try {
-            var trials = MAX_TRIALS
-            while (trials > 0) {
-                delay(INITIAL_ADB_DELAY_MS)
-                if (androidDebugBridge.isConnected) {
-                    break
-                }
-                trials--
-            }
-
-            if (!androidDebugBridge.isConnected) {
-                println(resourceManager.string("adbConnectionIssue"))
-                return Result.failure(Throwable(resourceManager.string("adbConnectionIssue")))
-            }
-
-            trials = MAX_TRIALS
-            while (trials > 0) {
-                delay(INITIAL_ADB_DELAY_MS)
-                if (androidDebugBridge.hasInitialDeviceList()) {
-                    break
-                }
-                trials--
-            }
-            delay(DELAY_MEDIUM)
-            if (!androidDebugBridge.hasInitialDeviceList()) {
-                println(resourceManager.string("getDevicesFromAdbError"))
-                return Result.failure(Throwable(resourceManager.string("getDevicesFromAdbError")))
-            }
-
-            this.adbIsConnect = true
-            return Result.success(true)
-        } catch (e: Exception) {
-            @Suppress("PrintStackTrace")
-            e.printStackTrace()
-            return Result.failure(e)
+        val project = ProjectManager.getInstance().openProjects.getOrNull(0)
+        adbPath = AndroidSdkUtils.findAdb(project).adbPath?.absolutePath
+        return if (adbPath == null || adbPath?.isEmpty() == true) {
+            adbIsConnect = false
+            adbLogger.println(resourceManager.string("adbConnectionIssue"))
+            failure(Throwable(resourceManager.string("adbConnectionIssue")))
+        } else {
+            adbIsConnect = true
+            Result.success(true)
         }
     }
 
-    override suspend fun getDevices(): Result<List<DeviceInformation>> {
-        if (!adbIsConnect) {
-            delay(INITIAL_ADB_RETRY_DELAY_MS)
-            initialAdb()
-        }
-
+    override suspend fun getDevices(): Result<List<Device>> {
         return if (adbIsConnect) {
-            val iDevices = androidDebugBridge.devices ?: arrayOf()
-            val devices = iDevices.filter {
-                it.isOnline
-            }.map {
-                it.toDeviceInformation()
-            }
+            val result = runtimeExec("$adbPath devices")
+            when {
+                result.isSuccess -> {
+                    val lines = result.getOrNull()?.trim()?.lines()?.drop(1) ?: emptyList()
+                    // sample lines
+                    // ce0516056bcc220e05	device
+                    // emulator-5554	device
+                    if (lines.isNotEmpty()) {
+                        success(prepareDevicesModels(lines))
+                    } else {
+                        failure(Throwable(resourceManager.string("connectAnAndroidDevice")))
+                    }
+                }
 
-            Result.success(devices)
+                else -> failure(
+                    Throwable(
+                        result.exceptionOrNull()?.message ?: resourceManager.string("connectAnAndroidDevice")
+                    )
+                )
+            }
         } else {
-            Result.failure(Throwable(resourceManager.string("adbIsNotInitialize")))
+            failure(Throwable(resourceManager.string("adbIsNotInitialize")))
+        }
+    }
+
+    private suspend fun prepareDevicesModels(lines: List<String>): List<Device> {
+        // sample lines
+        // ce0516056bcc220e05	device
+        // emulator-5554	device
+        val devices = mutableListOf<Device>()
+        lines.forEach { line ->
+            val id = line.split("\t")[0]
+            val device = Device(name = "None", id = id)
+            device.name = getNameDevice(device)
+            devices.add(device)
+        }
+        return devices
+    }
+
+    private suspend fun getNameDevice(device: Device): String {
+        if (device.id.startsWith("emulator")) {
+            val name =
+                executeADBCommand(device, DeviceAdbCommands.EmulatorName()).asSuccess().value.getOrNull()?.lines()
+                    ?.getOrNull(0)
+                    ?.replace("_", " ")
+            return "$name (${device.id})"
+        } else {
+            val brand = executeADBShellCommand(device, DeviceAdbCommands.Brand())
+                .asSuccess().value.getOrNull().toString()
+                .replace("[ro.product.brand]: [", "")
+                .replace("]", "").toUpperCaseAsciiOnly()
+
+            val model = executeADBShellCommand(device, DeviceAdbCommands.Model())
+                .asSuccess().value.getOrNull().toString()
+                .replace("[ro.product.model]: [", "")
+                .replace("]", "")
+            return "$brand - $model (${device.id})"
         }
     }
 
@@ -121,111 +132,78 @@ class AdbManagerImpl(
         }
     }
 
-    override suspend fun executeADBShellCommand(device: DeviceInformation?, command: AdbCommand): Result<String> {
+    override suspend fun executeADBCommand(device: Device?, command: AdbCommand): Result<String> {
         return suspendCoroutine { continuation ->
-            device?.iDevice?.executeShellCommand(
-                command.command,
-                object : IShellOutputReceiver {
-                    val bos: ByteArrayOutputStream = ByteArrayOutputStream()
-
-                    override fun addOutput(data: ByteArray?, offset: Int, length: Int) {
-                        bos.write(data, offset, length)
-                    }
-
-                    override fun flush() {
-                        try {
-                            bos.flush()
-                        } catch (e: IOException) {
-                            adbLogger.printResult(device, command, "fail", e)
-                        }
-                        val msg = String(bos.toByteArray()).trim()
-                        adbLogger.printResult(device, command, msg, null)
-                        return if (command.successResult == SuccessResultEnum.EMPTY && msg.isEmpty()) {
-                            continuation.resume(Result.success(msg))
-                        } else if (command.successResult == SuccessResultEnum.NOT_EMPTY && msg.isNotEmpty()) {
-                            continuation.resume(Result.success(msg))
-                        } else if (command.successResult == SuccessResultEnum.EMPTY_OR_NOT_EMPTY) {
-                            continuation.resume(Result.success(msg))
-                        } else {
-                            continuation.resume(Result.failure(Throwable(msg)))
-                        }
-                    }
-
-                    override fun isCancelled(): Boolean {
-                        return false
-                    }
+            runtimeExec("$adbPath -s ${device?.id} ${command.command}").onSuccess { result ->
+                val message = result.trim()
+                if (command.successResult == SuccessResultEnum.EMPTY && message.isEmpty()) {
+                    continuation.resume(Result.success(message))
+                } else if (command.successResult == SuccessResultEnum.NOT_EMPTY && message.isNotEmpty()) {
+                    continuation.resume(Result.success(message))
+                } else if (command.successResult == SuccessResultEnum.EMPTY_OR_NOT_EMPTY) {
+                    continuation.resume(Result.success(message))
+                } else {
+                    continuation.resume(failure(Throwable(message)))
                 }
-            )
+            }.onFailure {
+                continuation.resume(failure(Throwable(it.message ?: resourceManager.string("errorGeneral"))))
+            }
         }
     }
 
+    override suspend fun executeADBShellCommand(device: Device?, command: AdbCommand): Result<String> {
+        return suspendCoroutine { continuation ->
+            runtimeExec("$adbPath -s ${device?.id} shell ${command.command}").onSuccess { result ->
+                val message = result.trim()
+                if (command.successResult == SuccessResultEnum.EMPTY && message.isEmpty()) {
+                    continuation.resume(Result.success(message))
+                } else if (command.successResult == SuccessResultEnum.NOT_EMPTY && message.isNotEmpty()) {
+                    continuation.resume(Result.success(message))
+                } else if (command.successResult == SuccessResultEnum.EMPTY_OR_NOT_EMPTY) {
+                    continuation.resume(Result.success(message))
+                } else {
+                    continuation.resume(failure(Throwable(message)))
+                }
+            }.onFailure {
+                continuation.resume(failure(Throwable(it.message ?: resourceManager.string("errorGeneral"))))
+            }
+        }
+    }
+
+    @VisibleForTesting
     @Suppress("TooGenericExceptionCaught")
-    override suspend fun installApk(device: DeviceInformation?, packageFilePath: String): Result<String> {
-        return suspendCoroutine { continuation ->
-            device?.iDevice?.let {
-                try {
-                    device.iDevice.installPackage(packageFilePath, true)
-                    continuation.resume(Result.success(""))
-                } catch (e: Exception) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
-                }
-            } ?: run {
-                continuation.resume(Result.failure(Throwable(resourceManager.string("selectADevice"))))
-            }
-        }
-    }
+    fun runtimeExec(command: String): Result<String> {
+        try {
+            // Run the command
+            val process = Runtime.getRuntime().exec(command)
+            val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
 
-    override suspend fun pullFile(
-        device: DeviceInformation?,
-        remoteFilepath: String,
-        localFilePath: String
-    ): Result<String> {
-        return suspendCoroutine { continuation ->
-            device?.iDevice?.let {
-                val service: SyncService = device.iDevice.syncService
-                try {
-                    service.pullFile(
-                        remoteFilepath,
-                        localFilePath,
-                        SyncService.getNullProgressMonitor()
-                    )
-                    continuation.resume(Result.success(""))
-                } catch (e: SyncException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
-                } catch (e: TimeoutException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
-                } catch (e: IOException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
+            // Grab the result
+            var line: String?
+            val result = StringBuilder()
+            do {
+                line = bufferedReader.readLine()
+                line?.let {
+                    result.appendLine(line)
                 }
-            } ?: run {
-                continuation.resume(Result.failure(Throwable(resourceManager.string("selectADevice"))))
-            }
-        }
-    }
+            } while (line != null)
 
-    override suspend fun pushFile(
-        device: DeviceInformation?,
-        localFilePath: String,
-        remoteFilepath: String
-    ): Result<String> {
-        return suspendCoroutine { continuation ->
-            device?.iDevice?.let {
-                val service: SyncService = device.iDevice.syncService
-                try {
-                    service.pushFile(
-                        localFilePath,
-                        remoteFilepath,
-                        SyncService.getNullProgressMonitor()
-                    )
-                    continuation.resume(Result.success(""))
-                } catch (e: SyncException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
-                } catch (e: TimeoutException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
-                } catch (e: IOException) {
-                    continuation.resume(Result.failure(Throwable(e.message ?: resourceManager.string("errorGeneral"))))
+            // Check if the process exited with an error
+            val exitCode = process.waitFor()
+            if (exitCode != 0) {
+                val errorReader = BufferedReader(InputStreamReader(process.errorStream))
+                val error = StringBuilder()
+                var errorLine: String?
+                errorLine = errorReader.readLine()
+                while (errorLine != null) {
+                    error.append(errorLine + "\n")
+                    errorLine = errorReader.readLine()
                 }
+                return failure(Throwable(error.toString()))
             }
+            return success(result.toString())
+        } catch (e: Exception) {
+            return failure(Throwable(e.message ?: resourceManager.string("errorGeneral")))
         }
     }
 }

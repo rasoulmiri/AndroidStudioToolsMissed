@@ -28,7 +28,7 @@ class GetWifiStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and WiFi is enabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and WiFi is enabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(true)
@@ -49,7 +49,7 @@ class GetWifiStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and WiFi is disabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and WiFi is disabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(false)

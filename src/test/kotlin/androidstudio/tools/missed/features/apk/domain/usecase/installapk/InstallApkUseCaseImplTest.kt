@@ -34,6 +34,7 @@ class InstallApkUseCaseImplTest {
         val packageFilePath = "/path/to/app.apk"
 
         coEvery { mockDeviceManager.installApk(packageFilePath) } returns Result.success("Success")
+        coEvery { mockDeviceManager.executeShellCommand(any()) } returns Result.success("Success")
 
         // Act
         val result = useCase.invoke(packageFilePath).single()
@@ -49,6 +50,7 @@ class InstallApkUseCaseImplTest {
         val errorMessage = "Failed to install APK"
 
         coEvery { mockDeviceManager.installApk(packageFilePath) } returns Result.failure(IOException(errorMessage))
+        coEvery { mockDeviceManager.executeShellCommand(any()) } returns Result.failure(IOException(errorMessage))
 
         // Act
         val actualErrorMessage = useCase.invoke(packageFilePath).single().exceptionOrNull()?.message

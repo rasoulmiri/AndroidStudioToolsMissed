@@ -13,11 +13,6 @@ sealed class AdbCommand(
         successResult = SuccessResultEnum.NOT_EMPTY
     )
 
-    class SU : AdbCommand(
-        command = "su",
-        successResult = SuccessResultEnum.NOT_EMPTY
-    )
-
     class ClearApplicationData(private val packageId: String) : AdbCommand(
         command = "pm clear $packageId",
         successResult = SuccessResultEnum.NOT_EMPTY,

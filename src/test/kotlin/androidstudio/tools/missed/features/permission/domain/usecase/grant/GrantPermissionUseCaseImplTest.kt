@@ -66,7 +66,7 @@ class GrantPermissionUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with success text when permission grant succeeds`() = runTest {
+    fun `invoke() should emit success result with success text when permission grant succeed`() = runTest {
         // Arrange
         val permission = PermissionStateModel("android.permission.CAMERA", isGranted = false, isRuntime = true)
         val packageId = "com.example.package"
@@ -80,7 +80,13 @@ class GrantPermissionUseCaseImplTest {
                 error("Unexpected command")
             }
         }
-        coEvery { mockResourceManager.string("successGrantDescription", permission.name, packageId) } returns successText
+        coEvery {
+            mockResourceManager.string(
+                "successGrantDescription",
+                permission.name,
+                packageId
+            )
+        } returns successText
 
         // Act
         val result = useCase.invoke(permission).single()
@@ -111,7 +117,14 @@ class GrantPermissionUseCaseImplTest {
                 error("Unexpected command")
             }
         }
-        coEvery { mockResourceManager.string("failedGrantDescription", permission.name, packageId, errorMessage) } returns errorText
+        coEvery {
+            mockResourceManager.string(
+                "failedGrantDescription",
+                permission.name,
+                packageId,
+                errorMessage
+            )
+        } returns errorText
 
         // Act
         val actualErrorMessage = useCase.invoke(permission).single().exceptionOrNull()?.message

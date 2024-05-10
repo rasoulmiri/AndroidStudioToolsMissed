@@ -29,7 +29,7 @@ class SetPowerSavingUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds for enabling power saving mode`() = runTest {
+    fun `invoke() should emit success result when shell command succeed for enabling power saving mode`() = runTest {
         // Arrange
         val expectedResult = Result.success(true)
         coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {
@@ -53,7 +53,7 @@ class SetPowerSavingUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds for disabling power saving mode`() = runTest {
+    fun `invoke() should emit success result when shell command succeed for disabling power saving mode`() = runTest {
         // Arrange
         val expectedResult = Result.success(true)
         coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {

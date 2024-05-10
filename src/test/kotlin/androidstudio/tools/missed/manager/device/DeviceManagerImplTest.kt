@@ -2,13 +2,9 @@ package androidstudio.tools.missed.manager.device
 
 import androidstudio.tools.missed.manager.adb.AdbManager
 import androidstudio.tools.missed.manager.adb.command.AdbCommand
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.resource.ResourceManager
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.unmockkAll
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -34,8 +30,8 @@ class DeviceManagerImplTest {
     @Test
     fun `configure should return success if ADB is initialized and devices are retrieved successfully`() = runTest {
         // Arrange
-        val mockDeviceInformation1 = mockk<DeviceInformation>(relaxed = true)
-        val mockDeviceInformation2 = mockk<DeviceInformation>(relaxed = true)
+        val mockDeviceInformation1 = mockk<Device>(relaxed = true)
+        val mockDeviceInformation2 = mockk<Device>(relaxed = true)
         val devices = listOf(mockDeviceInformation1, mockDeviceInformation2)
         coEvery { mockAdbManager.initialAdb() } returns Result.success(true)
         coEvery { mockAdbManager.getDevices() } returns Result.success(devices)
@@ -83,7 +79,7 @@ class DeviceManagerImplTest {
     @Test
     fun `setSelectedDevice should update selectedDeviceStateFlow`() = runTest {
         // Arrange
-        val mockDeviceInformation = mockk<DeviceInformation>(relaxed = true)
+        val mockDeviceInformation = mockk<Device>(relaxed = true)
 
         // Act
         deviceManager.setSelectedDevice(mockDeviceInformation)
@@ -107,7 +103,7 @@ class DeviceManagerImplTest {
     @Test
     fun `getDeviceSelectedName should return the concatenated brand and model of the selected device`() = runTest {
         // Arrange
-        val mockDeviceInformation = mockk<DeviceInformation>(relaxed = true)
+        val mockDeviceInformation = mockk<Device>(relaxed = true)
         every { mockDeviceInformation.name } returns "Samsung Galaxy S10"
         deviceManager.setSelectedDevice(mockDeviceInformation)
 
@@ -141,8 +137,8 @@ class DeviceManagerImplTest {
         every { adbCommand.isNeedDevice } returns true
         every { adbCommand.isNeedPackageId } returns true
 
-        val mockDeviceInformation1 = mockk<DeviceInformation>(relaxed = true)
-        val mockDeviceInformation2 = mockk<DeviceInformation>(relaxed = true)
+        val mockDeviceInformation1 = mockk<Device>(relaxed = true)
+        val mockDeviceInformation2 = mockk<Device>(relaxed = true)
         val devices = listOf(mockDeviceInformation1, mockDeviceInformation2)
         coEvery { mockAdbManager.initialAdb() } returns Result.success(true)
         coEvery { mockAdbManager.getDevices() } returns Result.success(devices)
@@ -163,7 +159,7 @@ class DeviceManagerImplTest {
     fun `executeShellCommand should call adbManager executeADBShellCommand with correct arguments`() = runTest {
         // Arrange
         val adbCommand = mockk<AdbCommand>(relaxed = true)
-        val mockDeviceInformation = mockk<DeviceInformation>(relaxed = true)
+        val mockDeviceInformation = mockk<Device>(relaxed = true)
         val expectedResult = Result.success("Command executed")
         deviceManager.setSelectedDevice(mockDeviceInformation)
         deviceManager.setSelectedPackageId("com.example.app")

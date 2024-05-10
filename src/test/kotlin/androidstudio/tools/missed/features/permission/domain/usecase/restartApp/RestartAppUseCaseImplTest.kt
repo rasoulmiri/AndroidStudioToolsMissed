@@ -60,7 +60,9 @@ class RestartAppUseCaseImplTest {
         // Arrange
         val packageId = "com.example.package"
         val errorMessage = "Failed to close app"
-        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Close> { it.packageId == packageId }) } returns Result.failure(Throwable(errorMessage))
+        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Close> { it.packageId == packageId }) } returns Result.failure(
+            Throwable(errorMessage)
+        )
 
         // Act
         val actualErrorMessage = useCase.invoke().single().exceptionOrNull()?.message
@@ -77,8 +79,12 @@ class RestartAppUseCaseImplTest {
         val packageId = "com.example.package"
         val errorMessage = "Failed to open app"
 
-        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Close> { it.packageId == packageId }) } returns Result.success("App closed successfully")
-        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Open> { it.packageId == packageId }) } returns Result.failure(Throwable(errorMessage))
+        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Close> { it.packageId == packageId }) } returns Result.success(
+            "App closed successfully"
+        )
+        coEvery { mockDeviceManager.executeShellCommand(match<ApplicationAdbCommands.Open> { it.packageId == packageId }) } returns Result.failure(
+            Throwable(errorMessage)
+        )
 
         // Act
         val actualErrorMessage = useCase.invoke().single().exceptionOrNull()?.message

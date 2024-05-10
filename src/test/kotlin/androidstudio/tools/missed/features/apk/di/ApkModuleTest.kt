@@ -43,7 +43,6 @@ class ApkModuleTest : KoinTest {
         GlobalContext.stopKoin()
     }
 
-
     @Test
     fun `downloadApkFromDeviceUseCase should not be null`() {
         assertNotNull(downloadApkFromDeviceUseCase)

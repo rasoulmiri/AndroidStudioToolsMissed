@@ -29,7 +29,7 @@ class ResetBatteryConfigUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds`() = runTest {
+    fun `invoke() should emit success result when shell command succeed`() = runTest {
         // Arrange
         val expectedResult = Result.success(true)
         coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {

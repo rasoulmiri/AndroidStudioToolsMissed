@@ -28,7 +28,7 @@ class SetChargerConnectionUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds for charger connection`() =
+    fun `invoke() should emit success result when shell command succeed for charger connection`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)
@@ -48,7 +48,7 @@ class SetChargerConnectionUseCaseImplTest {
         }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds for charger disconnection`() =
+    fun `invoke() should emit success result when shell command succeed for charger disconnection`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)

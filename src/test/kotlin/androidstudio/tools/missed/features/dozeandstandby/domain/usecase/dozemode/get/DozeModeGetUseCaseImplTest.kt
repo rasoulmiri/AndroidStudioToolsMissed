@@ -29,7 +29,7 @@ class DozeModeGetUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeeds`() = runTest {
+    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeed`() = runTest {
         // Arrange
         val expectedOutput = "Stepped to deep: IDLE"
         val expectedResult = Result.success(DozeModeGetStateModel(true, "IDLE"))
@@ -49,44 +49,46 @@ class DozeModeGetUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeeds with different state`() = runTest {
-        // Arrange
-        val expectedOutput = "Stepped to deep: IDLE_MAINTENANCE"
-        val expectedResult = Result.success(DozeModeGetStateModel(true, "IDLE_MAINTENANCE"))
-        coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {
-            if (args.first() is DozeAdbCommands.GetState) {
-                Result.success(expectedOutput)
-            } else {
-                error("Unexpected command")
+    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeed with different state`() =
+        runTest {
+            // Arrange
+            val expectedOutput = "Stepped to deep: IDLE_MAINTENANCE"
+            val expectedResult = Result.success(DozeModeGetStateModel(true, "IDLE_MAINTENANCE"))
+            coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {
+                if (args.first() is DozeAdbCommands.GetState) {
+                    Result.success(expectedOutput)
+                } else {
+                    error("Unexpected command")
+                }
             }
+
+            // Act
+            val result = useCase.invoke().single()
+
+            // Assert
+            assertEquals(expectedResult, result)
         }
-
-        // Act
-        val result = useCase.invoke().single()
-
-        // Assert
-        assertEquals(expectedResult, result)
-    }
 
     @Test
-    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeeds and Doze mode is inactive`() = runTest {
-        // Arrange
-        val expectedOutput = "Some other output"
-        val expectedResult = Result.success(DozeModeGetStateModel(false, expectedOutput))
-        coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {
-            if (args.first() is DozeAdbCommands.GetState) {
-                Result.success(expectedOutput)
-            } else {
-                error("Unexpected command")
+    fun `invoke() should emit success result with DozeModeGetStateModel when shell command succeed and Doze mode is inactive`() =
+        runTest {
+            // Arrange
+            val expectedOutput = "Some other output"
+            val expectedResult = Result.success(DozeModeGetStateModel(false, expectedOutput))
+            coEvery { mockDeviceManager.executeShellCommand(any()) } coAnswers {
+                if (args.first() is DozeAdbCommands.GetState) {
+                    Result.success(expectedOutput)
+                } else {
+                    error("Unexpected command")
+                }
             }
+
+            // Act
+            val result = useCase.invoke().single()
+
+            // Assert
+            assertEquals(expectedResult, result)
         }
-
-        // Act
-        val result = useCase.invoke().single()
-
-        // Assert
-        assertEquals(expectedResult, result)
-    }
 
     @Test
     fun `invoke() should emit failure result when shell command fails`() = runTest {

@@ -2,15 +2,22 @@ package androidstudio.tools.missed.manager.adb.command
 
 class DeviceAdbCommands {
     class Brand : AdbCommand(
-        command = "getprop | grep \"ro.product.brand\"",
-        isNeedDevice = false,
+        command = "getprop | grep -i \"ro.product.brand\"",
+        isNeedDevice = true,
         isNeedPackageId = false,
         successResult = SuccessResultEnum.NOT_EMPTY
     )
 
     class Model : AdbCommand(
-        command = "getprop | grep \"ro.product.model\"",
-        isNeedDevice = false,
+        command = "getprop | grep -i \"ro.product.model\"",
+        isNeedDevice = true,
+        isNeedPackageId = false,
+        successResult = SuccessResultEnum.NOT_EMPTY
+    )
+
+    class EmulatorName : AdbCommand(
+        command = "emu avd name",
+        isNeedDevice = true,
         isNeedPackageId = false,
         successResult = SuccessResultEnum.NOT_EMPTY
     )

@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.androidstudiotoolsmissed"
-version = "1.0.1-SNAPSHOT"
+version = "1.0.3-SNAPSHOT"
 
 repositories {
     mavenCentral()

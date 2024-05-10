@@ -63,7 +63,7 @@ class InputTextViewModelTest {
     }
 
     @Test
-    fun `sendTextToDevice should emit success notification on successful text send`() = runTest (testDispatcher){
+    fun `sendTextToDevice should emit success notification on successful text send`() = runTest(testDispatcher) {
 
         // Arrange
         val inputText = "Hello"
@@ -155,7 +155,7 @@ class InputTextViewModelTest {
 
     @Test
     fun `sendEventToDevice should emit error notification on failure`() = runTest {
-       
+
         // Arrange
         val errorTitle = "errorTitle"
         val errorMessage = "Failed to send event"

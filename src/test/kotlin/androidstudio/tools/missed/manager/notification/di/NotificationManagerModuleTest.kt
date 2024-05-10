@@ -16,7 +16,7 @@ import org.koin.test.inject
 
 class NotificationManagerModuleTest : KoinTest {
 
-    private val preDependencies =  applicationCoroutinesScopeModule +
+    private val preDependencies = applicationCoroutinesScopeModule +
             resourceManagerModule
     private val testModule = preDependencies + notificationManagerModule
 

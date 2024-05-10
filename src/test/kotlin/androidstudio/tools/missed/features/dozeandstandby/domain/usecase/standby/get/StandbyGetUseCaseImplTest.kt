@@ -34,7 +34,7 @@ class StandbyGetUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with true when shell command succeeds and standby state is active`() =
+    fun `invoke() should emit success result with true when shell command succeed and standby state is active`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)
@@ -57,7 +57,7 @@ class StandbyGetUseCaseImplTest {
         }
 
     @Test
-    fun `invoke() should emit success result with false when shell command succeeds and standby state is inactive`() =
+    fun `invoke() should emit success result with false when shell command succeed and standby state is inactive`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(false)

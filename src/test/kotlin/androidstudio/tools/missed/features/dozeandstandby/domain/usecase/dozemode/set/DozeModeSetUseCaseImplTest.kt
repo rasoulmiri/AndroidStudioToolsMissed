@@ -28,7 +28,7 @@ class DozeModeSetUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with true when shell command succeeds and active is set to true`() =
+    fun `invoke() should emit success result with true when shell command succeed and active is set to true`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)
@@ -48,7 +48,7 @@ class DozeModeSetUseCaseImplTest {
         }
 
     @Test
-    fun `invoke() should emit success result with true when shell command succeeds and active is set to false`() =
+    fun `invoke() should emit success result with true when shell command succeed and active is set to false`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)

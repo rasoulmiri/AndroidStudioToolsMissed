@@ -3,7 +3,6 @@ package androidstudio.tools.missed.manager.adb.di
 import androidstudio.tools.missed.manager.adb.AdbManager
 import androidstudio.tools.missed.manager.adb.logger.AdbLogger
 import androidstudio.tools.missed.manager.resource.di.resourceManagerModule
-import com.android.ddmlib.AndroidDebugBridge
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -19,7 +18,6 @@ class AdbManagerModuleTest : KoinTest {
     private val preDependencies = resourceManagerModule
     private val testModule = preDependencies + adbManagerModule
 
-    private val androidDebugBridge: AndroidDebugBridge by inject()
     private val adbLogger: AdbLogger by inject()
     private val adbManager: AdbManager by inject()
 
@@ -34,11 +32,6 @@ class AdbManagerModuleTest : KoinTest {
     fun cleanup() {
         unmockkAll()
         stopKoin()
-    }
-
-    @Test
-    fun `androidDebugBridge should not be null`() {
-        assertNotNull(androidDebugBridge)
     }
 
     @Test

@@ -1,9 +1,7 @@
 package androidstudio.tools.missed.manager.adb.logger
 
 import androidstudio.tools.missed.manager.adb.command.NetworkAdbCommands
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
-import com.android.ddmlib.IDevice
-import io.mockk.mockk
+import androidstudio.tools.missed.manager.device.model.Device
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayOutputStream
@@ -17,8 +15,7 @@ class AdbLoggerImplTest {
         val adbLogger = AdbLoggerImpl()
 
         // Create sample input data
-        val mockDevice = mockk<IDevice>(relaxed = true)
-        val device = DeviceInformation("Device 1", mockDevice)
+        val device = Device("Device1", "id1")
         val adbCommand = NetworkAdbCommands.GetMobileDataState()
         val message = "Success"
         val exception: IOException? = null
@@ -39,7 +36,7 @@ class AdbLoggerImplTest {
         // Define the expected output
         val expectedOutput = """
             ExecuteShellCommand ____________________________________________________________________________
-            Device  = Device 1
+            Device  = Device1
             CommandName = GetMobileDataState
                 settings get global mobile_data 
             Result  = Success

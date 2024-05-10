@@ -28,7 +28,7 @@ class GetBatteryLevelUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with battery level when shell command succeeds`() =
+    fun `invoke() should emit success result with battery level when shell command succeed`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(80)

@@ -103,7 +103,7 @@ class BatteryView(
 
             row {
                 cell(powerSavingModeLabel).gap(RightGap.SMALL)
-                powerSavingModeComment = comment("").widthGroup("GroupName")
+                powerSavingModeComment = comment("")
                 cell(powerSavingModeButton)
                 powerSavingModeButton.addItemListener(powerSavingModeButtonItemListener)
             }.layout(RowLayout.PARENT_GRID)

@@ -1,22 +1,21 @@
 package androidstudio.tools.missed.manager.adb.logger
 
 import androidstudio.tools.missed.manager.adb.command.AdbCommand
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import java.io.IOException
 
 class AdbLoggerImpl : AdbLogger {
 
-    override fun printResult(
-        device: DeviceInformation?,
-        adbCommand: AdbCommand,
-        message: String,
-        exception: IOException?
-    ) {
+    override fun println(message: String) {
+        System.out.println(message)
+    }
+
+    override fun printResult(device: Device?, adbCommand: AdbCommand, message: String, exception: IOException?) {
         println(
             "\nExecuteShellCommand ____________________________________________________________________________" +
                 "\nDevice  = ${
                 if (device?.name == "Unknow") {
-                    device.iDevice.serialNumber
+                    device.id
                 } else {
                     device?.name?.replace("\n", "")
                 }
