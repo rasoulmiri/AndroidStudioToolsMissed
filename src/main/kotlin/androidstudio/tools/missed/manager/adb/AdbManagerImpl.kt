@@ -160,7 +160,7 @@ class AdbManagerImpl(
                 println(message)
                 continuation.resume(success("$newCommand\n==========================\n$message"))
             }.onFailure {
-                continuation.resume(failure(Throwable(it.message ?: resourceManager.string("errorGeneral"))))
+                continuation.resume(failure(Throwable("$newCommand\n==========================\n$it.message")))
             }
         }
     }
