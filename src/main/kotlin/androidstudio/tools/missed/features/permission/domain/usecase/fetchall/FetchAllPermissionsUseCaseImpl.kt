@@ -50,33 +50,22 @@ class FetchAllPermissionsUseCaseImpl(
         // requested permissions:
         // android.permission.FOREGROUND_SERVICE
         // android.permission.INTERNET
-        // android.permission.ACCESS_NETWORK_STATE
-        // android.permission.ACCESS_WIFI_STATE
-        // android.permission.ACCESS_LOCATION
-        // android.permission.ACCESS_COARSE_LOCATION
-        // android.permission.ACCESS_FINE_LOCATION
         // android.permission.CAMERA
         // ...
-        // install permissions:
-        // com.izettle.android.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: granted=true
-        // com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE: granted=true
-        // android.permission.NFC: granted=true
-        // android.permission.FOREGROUND_SERVICE: granted=true
-        // android.permission.REQUEST_COMPANION_USE_DATA_IN_BACKGROUND: granted=true
-        // android.permission.RECEIVE_BOOT_COMPLETED: granted=true
-        // android.permission.INTERNET: granted=true
-        // se.eelde.toggles.provider_permission: granted=true
-        // android.permission.ACCESS_NETWORK_STATE: granted=true
         // ...
+        // install permissions:
+        // android.permission.NFC: granted=true
+        // android.permission.INTERNET: granted=true
+        // android.permission.BLUETOOTH_ADMIN: granted=true
+        // gids=[3002, 3003, 3001]
         // runtime permissions:
-        // android.permission.POST_NOTIFICATIONS: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
-        // android.permission.ACCESS_FINE_LOCATION: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
-        // android.permission.BLUETOOTH_CONNECT: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
-        // android.permission.READ_EXTERNAL_STORAGE: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED|RESTRICTION_INSTALLER_EXEMPT]
-        // android.permission.ACCESS_COARSE_LOCATION: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
-        // android.permission.CAMERA: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
-        // android.permission.WRITE_EXTERNAL_STORAGE: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED|RESTRICTION_INSTALLER_EXEMPT]
-        // android.permission.BLUETOOTH_SCAN: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        // android.permission.ACCESS_FINE_LOCATION: granted=true
+        // android.permission.CAMERA: granted=true
+        // disabledComponents:
+        // ...
+        // enabledComponents:
+        // ...
+        // mSkippingApks:
 
         val requestedPermissions = result
             .substringAfter("requested permissions:")
