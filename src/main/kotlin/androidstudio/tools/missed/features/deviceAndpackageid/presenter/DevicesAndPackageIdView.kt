@@ -62,8 +62,7 @@ class DevicesAndPackageIdView(
 
         packageIdsComboBox = ComboBox(packageIdsComboBoxModel)
         packageIdsComboBox.preferredSize = Dimension(DIMENSION_8, packageIdsComboBox.preferredSize.height)
-        packageIdsComboBox.renderer =
-            PackageIdsComboBoxRenderer(resourceManager.string("connectAnAndroidDevice"))
+        packageIdsComboBox.renderer = PackageIdsComboBoxRenderer("")
         packageIdsComboBox.addItemListener {
             if (it.stateChange == ItemEvent.SELECTED) {
                 viewModel.selectedPackageId((packageIdsComboBox.selectedItem as PackageId).title)

@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.androidstudiotoolsmissed"
-version = "1.0.3-SNAPSHOT"
+version = "1.0.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -20,11 +20,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
     implementation("io.insert-koin:koin-core:3.2.2")
+    implementation("com.google.code.gson:gson:2.8.8")
     testImplementation("io.insert-koin:koin-test:3.2.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
     testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-    testImplementation ("app.cash.turbine:turbine:1.0.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
 }
 

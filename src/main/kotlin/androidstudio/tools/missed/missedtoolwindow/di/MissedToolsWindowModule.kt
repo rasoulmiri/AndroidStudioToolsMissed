@@ -5,6 +5,7 @@ import androidstudio.tools.missed.base.ViewMaster
 import androidstudio.tools.missed.features.MainView
 import androidstudio.tools.missed.features.apk.presenter.ApkView
 import androidstudio.tools.missed.features.battery.presenter.BatteryView
+import androidstudio.tools.missed.features.customcommand.presenter.CustomCommandView
 import androidstudio.tools.missed.features.deviceAndpackageid.presenter.DevicesAndPackageIdView
 import androidstudio.tools.missed.features.dozeandstandby.presenter.DozeAndStandbyView
 import androidstudio.tools.missed.features.input.presenter.InputTextView
@@ -16,6 +17,7 @@ import org.koin.dsl.module
 
 val missedToolsWindowModule = module {
     single { MissedToolsWindowViewModel(get(named("IODispatcher")), get()) }
+    factory<CollapsibleGroupView<*>>(named("customCommandView")) { CustomCommandView(get(), get(), get()) }
     factory<CollapsibleGroupView<*>>(named("networkView")) { NetworkView(get(), get(), get()) }
     factory<CollapsibleGroupView<*>>(named("inputTextView")) { InputTextView(get(), get(), get()) }
     factory<CollapsibleGroupView<*>>(named("permissionView")) { PermissionView(get(), get(), get()) }
@@ -25,6 +27,7 @@ val missedToolsWindowModule = module {
     factory<ViewMaster<*>>(named("stickyView")) { DevicesAndPackageIdView(get(), get(), get()) }
     factory<List<CollapsibleGroupView<*>>>(named("views")) {
         listOf(
+            get(named("customCommandView")),
             get(named("networkView")),
             get(named("inputTextView")),
             get(named("permissionView")),

@@ -33,7 +33,7 @@ class DeviceAdbCommands {
         command = "cmd package list packages -3 | cut -f 2 -d \":\"",
         isNeedDevice = true,
         isNeedPackageId = false,
-        successResult = SuccessResultEnum.NOT_EMPTY
+        successResult = SuccessResultEnum.EMPTY_OR_NOT_EMPTY
     )
 
     class PackageVerifierEnable : AdbCommand(

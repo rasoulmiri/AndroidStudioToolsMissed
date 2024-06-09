@@ -1,17 +1,13 @@
 package androidstudio.tools.missed.manager.adb
 
+import androidstudio.tools.missed.features.customcommand.model.CustomCommand
 import androidstudio.tools.missed.manager.adb.command.AdbCommand
 import androidstudio.tools.missed.manager.adb.command.DeviceAdbCommands
 import androidstudio.tools.missed.manager.adb.command.SuccessResultEnum
 import androidstudio.tools.missed.manager.adb.logger.AdbLogger
 import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.resource.ResourceManager
-import com.android.ddmlib.AndroidDebugBridge
-import com.android.ddmlib.IDevice
 import com.intellij.openapi.project.ProjectManager
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import org.gradle.internal.impldep.org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.android.sdk.AndroidSdkUtils
 import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
@@ -41,7 +37,7 @@ class AdbManagerImpl(
             failure(Throwable(resourceManager.string("adbConnectionIssue")))
         } else {
             adbIsConnect = true
-            Result.success(true)
+            success(true)
         }
     }
 
@@ -107,41 +103,16 @@ class AdbManagerImpl(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun deviceChangeListener() = callbackFlow {
-        val listener = object : AndroidDebugBridge.IDeviceChangeListener {
-            override fun deviceConnected(device: IDevice) {
-                println("deviceConnected -> " + device.serialNumber)
-                trySend(device)
-            }
-
-            override fun deviceDisconnected(device: IDevice?) {
-                println("deviceDisconnected -> " + device?.serialNumber)
-                trySend(device)
-            }
-
-            @Suppress("EmptyFunctionBlock")
-            override fun deviceChanged(device: IDevice?, changeMask: Int) {
-            }
-        }
-
-        AndroidDebugBridge.addDeviceChangeListener(listener)
-
-        awaitClose {
-            AndroidDebugBridge.addDeviceChangeListener(null)
-        }
-    }
-
     override suspend fun executeADBCommand(device: Device?, command: AdbCommand): Result<String> {
         return suspendCoroutine { continuation ->
             runtimeExec("$adbPath -s ${device?.id} ${command.command}").onSuccess { result ->
                 val message = result.trim()
                 if (command.successResult == SuccessResultEnum.EMPTY && message.isEmpty()) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else if (command.successResult == SuccessResultEnum.NOT_EMPTY && message.isNotEmpty()) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else if (command.successResult == SuccessResultEnum.EMPTY_OR_NOT_EMPTY) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else {
                     continuation.resume(failure(Throwable(message)))
                 }
@@ -156,14 +127,38 @@ class AdbManagerImpl(
             runtimeExec("$adbPath -s ${device?.id} shell ${command.command}").onSuccess { result ->
                 val message = result.trim()
                 if (command.successResult == SuccessResultEnum.EMPTY && message.isEmpty()) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else if (command.successResult == SuccessResultEnum.NOT_EMPTY && message.isNotEmpty()) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else if (command.successResult == SuccessResultEnum.EMPTY_OR_NOT_EMPTY) {
-                    continuation.resume(Result.success(message))
+                    continuation.resume(success(message))
                 } else {
                     continuation.resume(failure(Throwable(message)))
                 }
+            }.onFailure {
+                continuation.resume(failure(Throwable(it.message ?: resourceManager.string("errorGeneral"))))
+            }
+        }
+    }
+
+    override suspend fun executeCustomCommand(
+        device: Device?,
+        packageId: String?,
+        command: CustomCommand
+    ): Result<String> {
+        return suspendCoroutine { continuation ->
+
+            val newCommand =
+                command.command
+                    ?.replace("\$ADB", "$adbPath -s ${device?.id}")
+                    ?.replace("\$APP_ID", "$packageId")
+                    ?: ""
+
+            println("$newCommand\n==========================\n")
+            runtimeExec(newCommand).onSuccess { result ->
+                val message = result.trim()
+                println(message)
+                continuation.resume(success("$newCommand\n==========================\n$message"))
             }.onFailure {
                 continuation.resume(failure(Throwable(it.message ?: resourceManager.string("errorGeneral"))))
             }

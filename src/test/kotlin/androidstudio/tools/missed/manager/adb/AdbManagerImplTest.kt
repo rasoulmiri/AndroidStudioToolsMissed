@@ -1,6 +1,8 @@
 package androidstudio.tools.missed.manager.adb
 
+import androidstudio.tools.missed.features.customcommand.model.CustomCommand
 import androidstudio.tools.missed.manager.adb.logger.AdbLogger
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.resource.ResourceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -205,6 +207,92 @@ class AdbManagerImplTest {
         assert(result.isSuccess)
         assert(result.getOrNull() == "output line 1\noutput line 2\n")
 
+    }
+
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec`() = runTest {
+
+        // Arrange
+        val command = "ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        // Act
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec(command)
+        }
+
+    }
+
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec with adb path`() = runTest {
+
+        // Arrange
+        val command = "\$ADB ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        val adbPath = "/Users/User/Library/Android/sdk/platform-tools/adb"
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File(adbPath),
+            emptyList<String>()
+        )
+
+        // Act
+        adbManagerSpy.initialAdb()
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec("/Users/User/Library/Android/sdk/platform-tools/adb -s deviceId1 ls")
+        }
+    }
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec with app id`() = runTest {
+
+        // Arrange
+        val command = "\$ADB \$APP_ID ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        val adbPath = "/Users/User/Library/Android/sdk/platform-tools/adb"
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File(adbPath),
+            emptyList<String>()
+        )
+
+        // Act
+        adbManagerSpy.initialAdb()
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec("/Users/User/Library/Android/sdk/platform-tools/adb -s deviceId1 $packageId ls")
+        }
     }
 
 

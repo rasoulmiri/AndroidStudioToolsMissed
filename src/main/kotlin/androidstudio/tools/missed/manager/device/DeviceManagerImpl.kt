@@ -1,5 +1,6 @@
 package androidstudio.tools.missed.manager.device
 
+import androidstudio.tools.missed.features.customcommand.model.CustomCommand
 import androidstudio.tools.missed.manager.adb.AdbManager
 import androidstudio.tools.missed.manager.adb.command.AdbCommand
 import androidstudio.tools.missed.manager.adb.command.ApplicationAdbCommands
@@ -12,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class DeviceManagerImpl(
@@ -48,10 +48,14 @@ class DeviceManagerImpl(
 
         // Add listener for changing devices like connect or disconnect
         coroutineScope.launch {
-            delay(DELAY_LONG)
-            adbManager.deviceChangeListener().collectLatest {
+            while (true) {
                 delay(DELAY_LONG)
-                getDevicesFromAdb()
+                val newDevices = adbManager.getDevices().getOrNull()
+                val idsNew = newDevices?.map { it.id }?.toSet()
+                val idsOld = _devicesStateFlow.value.map { it.id }.toSet()
+                if (idsNew != idsOld) {
+                    getDevicesFromAdb()
+                }
             }
         }
         return Result.success(true)
@@ -62,11 +66,9 @@ class DeviceManagerImpl(
 
         return if (resultGetDevices.isSuccess) {
             val devices = resultGetDevices.getOrNull()?.sortedBy { it.name }
-            if (devices != _devicesStateFlow.value) {
-                clearData()
-                _devicesStateFlow.emit(devices ?: emptyList())
-                _selectedDeviceStateFlow.emit(_devicesStateFlow.value.getOrNull(0))
-            }
+            clearData()
+            _devicesStateFlow.emit(devices ?: emptyList())
+            _selectedDeviceStateFlow.emit(_devicesStateFlow.value.getOrNull(0))
             Result.success(true)
         } else {
             Result.failure(Throwable(resourceManager.string("getDevicesFromAdbError")))
@@ -105,6 +107,14 @@ class DeviceManagerImpl(
         return adbManager.executeADBShellCommand(
             device = _selectedDeviceStateFlow.value,
             command = adbCommand
+        )
+    }
+
+    override suspend fun executeCustomCommand(customCommand: CustomCommand): Result<String> {
+        return adbManager.executeCustomCommand(
+            device = _selectedDeviceStateFlow.value,
+            packageId = _packageIdSelectedStateFlow.value,
+            command = customCommand
         )
     }
 
