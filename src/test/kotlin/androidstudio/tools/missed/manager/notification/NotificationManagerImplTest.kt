@@ -1,20 +1,11 @@
 import androidstudio.tools.missed.manager.notification.NotificationManagerImpl
 import androidstudio.tools.missed.manager.notification.model.BalloonNotificationModel
 import androidstudio.tools.missed.manager.resource.ResourceManager
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationGroup
-import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationType
+import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+import io.mockk.*
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
@@ -38,7 +29,7 @@ class NotificationManagerImplTest {
 
     @Before
     fun setUp() {
-        notificationManager = NotificationManagerImpl( testScope,mockResourceManager)
+        notificationManager = NotificationManagerImpl(testScope, mockResourceManager)
         mockkStatic(ProjectManager::class)
         every { ProjectManager.getInstance() } returns mockk {
             every { openProjects } returns arrayOf(mockProject)
@@ -74,7 +65,7 @@ class NotificationManagerImplTest {
             mockNotificationGroup.createNotification(
                 title = title,
                 content = content,
-                type =type
+                type = type
             )
         } returns mockNotification
 
@@ -120,7 +111,7 @@ class NotificationManagerImplTest {
             mockNotificationGroup.createNotification(
                 title = title,
                 content = content,
-                type =type
+                type = type
             )
         } returns mockNotification
 

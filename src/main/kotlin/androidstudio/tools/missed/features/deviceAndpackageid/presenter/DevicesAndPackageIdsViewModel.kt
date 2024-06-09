@@ -3,7 +3,7 @@ package androidstudio.tools.missed.features.deviceAndpackageid.presenter
 import androidstudio.tools.missed.base.ViewModel
 import androidstudio.tools.missed.features.deviceAndpackageid.domain.usecase.GetPackageIdsInstalledInDeviceUseCase
 import androidstudio.tools.missed.manager.device.DeviceManager
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.notification.model.BalloonNotificationModel
 import androidstudio.tools.missed.manager.resource.ResourceManager
 import com.intellij.notification.NotificationType
@@ -28,8 +28,8 @@ class DevicesAndPackageIdsViewModel(
     private val _messageSharedFlow = MutableSharedFlow<BalloonNotificationModel>()
     val messageSharedFlow: SharedFlow<BalloonNotificationModel> = _messageSharedFlow.asSharedFlow()
 
-    private val _devicesStateFlow = MutableStateFlow<List<DeviceInformation>>(arrayListOf())
-    val devicesStateFlow: StateFlow<List<DeviceInformation>> = _devicesStateFlow.asStateFlow()
+    private val _devicesStateFlow = MutableStateFlow<List<Device>>(arrayListOf())
+    val devicesStateFlow: StateFlow<List<Device>> = _devicesStateFlow.asStateFlow()
 
     private val _packageIdsStateFlow = MutableStateFlow<ArrayList<String>>(arrayListOf())
     val packageIdsStateFlow: StateFlow<ArrayList<String>> = _packageIdsStateFlow.asStateFlow()
@@ -73,7 +73,7 @@ class DevicesAndPackageIdsViewModel(
             }
     }
 
-    fun setSelectedDevice(device: DeviceInformation?) {
+    fun setSelectedDevice(device: Device?) {
         viewModelScope.launch {
             deviceManager.setSelectedDevice(device)
         }

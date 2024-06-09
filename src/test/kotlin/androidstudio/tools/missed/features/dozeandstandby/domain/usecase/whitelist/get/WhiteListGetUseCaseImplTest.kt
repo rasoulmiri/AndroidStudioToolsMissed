@@ -28,7 +28,7 @@ class WhiteListGetUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with parsed white list when shell command succeeds`() =
+    fun `invoke() should emit success result with parsed white list when shell command succeed`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(arrayListOf("com.example.app1", "com.example.app2"))

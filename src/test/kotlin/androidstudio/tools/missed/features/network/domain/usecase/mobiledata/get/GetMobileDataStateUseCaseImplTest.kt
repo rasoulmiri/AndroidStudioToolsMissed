@@ -28,7 +28,7 @@ class GetMobileDataStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and mobile data is enabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and mobile data is enabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(true)
@@ -49,7 +49,7 @@ class GetMobileDataStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and mobile data is disabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and mobile data is disabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(false)

@@ -40,11 +40,9 @@ class MissedToolsWindowViewModel(
         initialJob = viewModelScope.launch {
             _uiStateFlow.emit(MissedToolsWindowStateUi.Loading)
 
-            val resultConfigureDeviceManager = viewModelScope.async {
+            viewModelScope.async {
                 deviceManager.configure(viewModelScope)
-            }.await()
-
-            resultConfigureDeviceManager.onSuccess { isSuccessConfiguration ->
+            }.await().onSuccess { isSuccessConfiguration ->
                 _uiStateFlow.emit(
                     if (isSuccessConfiguration) {
                         initialDeviceListener()

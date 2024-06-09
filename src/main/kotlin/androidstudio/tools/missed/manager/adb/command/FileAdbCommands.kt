@@ -7,4 +7,14 @@ class FileAdbCommands {
         isNeedPackageId = true,
         successResult = SuccessResultEnum.NOT_EMPTY
     )
+
+    class PullFile(
+        remoteFilepath: String,
+        localFilePath: String
+    ) : AdbCommand(
+        command = "pull $remoteFilepath $localFilePath",
+        isNeedDevice = true,
+        isNeedPackageId = false,
+        successResult = SuccessResultEnum.NOT_EMPTY
+    )
 }

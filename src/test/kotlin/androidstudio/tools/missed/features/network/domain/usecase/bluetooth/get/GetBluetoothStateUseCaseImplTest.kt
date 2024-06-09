@@ -28,7 +28,7 @@ class GetBluetoothStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and Bluetooth is enabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and Bluetooth is enabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(true)
@@ -49,7 +49,7 @@ class GetBluetoothStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and Bluetooth is disabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and Bluetooth is disabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(false)

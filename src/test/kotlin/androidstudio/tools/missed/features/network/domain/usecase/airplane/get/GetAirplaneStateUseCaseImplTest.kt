@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.Test
 
 class GetAirplaneStateUseCaseImplTest {
-    
+
     private val mockDeviceManager = mockk<DeviceManager>()
     private lateinit var useCase: GetAirplaneStateUseCaseImpl
 
@@ -27,9 +27,9 @@ class GetAirplaneStateUseCaseImplTest {
     fun cleanup() {
         unmockkAll()
     }
-    
+
     @Test
-    fun `invoke() should emit success result when shell command succeeds and airplane mode is enabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and airplane mode is enabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(true)
@@ -51,7 +51,7 @@ class GetAirplaneStateUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result when shell command succeeds and airplane mode is disabled`() = runTest {
+    fun `invoke() should emit success result when shell command succeed and airplane mode is disabled`() = runTest {
 
         // Arrange
         val expectedResult = Result.success(false)

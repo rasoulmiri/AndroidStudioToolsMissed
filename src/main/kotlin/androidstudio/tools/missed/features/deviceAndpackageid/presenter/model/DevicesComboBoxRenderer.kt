@@ -1,6 +1,6 @@
 package androidstudio.tools.missed.features.deviceAndpackageid.presenter.model
 
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JList
@@ -18,8 +18,8 @@ internal class DevicesComboBoxRenderer(private val placeHolder: String) : JLabel
         text = if (index == -1 && value == null) {
             placeHolder
         } else {
-            if ((value as? DeviceInformation)?.name != null) {
-                (value as? DeviceInformation)?.name
+            if ((value as? Device)?.name != null) {
+                (value as? Device)?.name
             } else {
                 value.toString()
             }

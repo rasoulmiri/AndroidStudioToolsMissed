@@ -32,7 +32,7 @@ class WhiteListRemoveUseCaseImplTest {
     }
 
     @Test
-    fun `invoke() should emit success result with true when shell command succeeds`() =
+    fun `invoke() should emit success result with true when shell command succeed`() =
         runTest {
             // Arrange
             val expectedResult = Result.success(true)

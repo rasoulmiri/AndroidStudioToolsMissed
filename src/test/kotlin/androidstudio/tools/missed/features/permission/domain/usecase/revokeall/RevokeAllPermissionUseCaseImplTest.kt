@@ -53,7 +53,7 @@ class RevokeAllPermissionUseCaseImplTest {
         )
         val revokeResult = Result.success("Permission revoked successfully")
         val successResultMessage = "All permissions revoked successfully"
-        val successResult =Result.success(successResultMessage)
+        val successResult = Result.success(successResultMessage)
         coEvery { mockFetchAllPermissionsUseCase.invoke() } returns flow { emit(Result.success(permissions)) }
         coEvery { mockRevokePermissionUseCase.invoke(any()) } returns flow { emit(revokeResult) }
         coEvery { mockResourceManager.string(any(), any()) } answers {
@@ -77,7 +77,7 @@ class RevokeAllPermissionUseCaseImplTest {
         // Arrange
         val emptyPermissions = arrayListOf<PermissionStateModel>()
         val successResultMessage = "All permissions revoked successfully"
-        val successResult =Result.success(successResultMessage)
+        val successResult = Result.success(successResultMessage)
         coEvery { mockFetchAllPermissionsUseCase.invoke() } returns flow { emit(Result.success(emptyPermissions)) }
         coEvery { mockResourceManager.string("permissionsRevokeAllSuccessTitle", any()) } returns successResultMessage
 
@@ -96,7 +96,7 @@ class RevokeAllPermissionUseCaseImplTest {
             PermissionStateModel("android.permission.CAMERA", isGranted = true, isRuntime = true),
             PermissionStateModel("android.permission.ACCESS_FINE_LOCATION", isGranted = true, isRuntime = true)
         )
-        val revokeMessage ="Failed to revoke permission"
+        val revokeMessage = "Failed to revoke permission"
         val revokeResult = Result.failure<String>(Throwable(revokeMessage))
         coEvery { mockFetchAllPermissionsUseCase.invoke() } returns flow { emit(Result.success(permissions)) }
         coEvery { mockRevokePermissionUseCase.invoke(any()) } returns flow { emit(revokeResult) }

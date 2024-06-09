@@ -2,6 +2,7 @@ package androidstudio.tools.missed.dependencymanager
 
 import androidstudio.tools.missed.features.apk.di.apkModule
 import androidstudio.tools.missed.features.battery.di.batteryModule
+import androidstudio.tools.missed.features.customcommand.di.customCommandModule
 import androidstudio.tools.missed.features.deviceAndpackageid.di.deviceAndPackageIdsModule
 import androidstudio.tools.missed.features.dozeandstandby.di.dozeAndStandbyModule
 import androidstudio.tools.missed.features.input.di.inputModule
@@ -31,6 +32,7 @@ class DependencyInjectionInjectionManagerImpl : KoinComponent, DependencyInjecti
                     missedToolsWindowModule +
                     deviceManagerModule +
                     deviceAndPackageIdsModule +
+                    customCommandModule +
                     inputModule +
                     networkModule +
                     permissionModule +

@@ -6,7 +6,7 @@ import androidstudio.tools.missed.features.deviceAndpackageid.presenter.model.De
 import androidstudio.tools.missed.features.deviceAndpackageid.presenter.model.PackageId
 import androidstudio.tools.missed.features.deviceAndpackageid.presenter.model.PackageIdComboBoxModel
 import androidstudio.tools.missed.features.deviceAndpackageid.presenter.model.PackageIdsComboBoxRenderer
-import androidstudio.tools.missed.manager.device.model.DeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.notification.NotificationManager
 import androidstudio.tools.missed.manager.resource.ResourceManager
 import androidstudio.tools.missed.utils.DIMENSION_8
@@ -27,7 +27,7 @@ class DevicesAndPackageIdView(
 ) : ViewMaster<DevicesAndPackageIdsViewModel>(viewModel) {
 
     // Device
-    private lateinit var devicesComboBox: JComboBox<DeviceInformation?>
+    private lateinit var devicesComboBox: JComboBox<Device?>
     private var devicesComboBoxModel = DevicesComboBoxModel()
 
     // packageIds
@@ -62,8 +62,7 @@ class DevicesAndPackageIdView(
 
         packageIdsComboBox = ComboBox(packageIdsComboBoxModel)
         packageIdsComboBox.preferredSize = Dimension(DIMENSION_8, packageIdsComboBox.preferredSize.height)
-        packageIdsComboBox.renderer =
-            PackageIdsComboBoxRenderer(resourceManager.string("connectAnAndroidDevice"))
+        packageIdsComboBox.renderer = PackageIdsComboBoxRenderer("")
         packageIdsComboBox.addItemListener {
             if (it.stateChange == ItemEvent.SELECTED) {
                 viewModel.selectedPackageId((packageIdsComboBox.selectedItem as PackageId).title)

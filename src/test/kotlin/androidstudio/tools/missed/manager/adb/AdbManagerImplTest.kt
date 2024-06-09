@@ -1,31 +1,32 @@
 package androidstudio.tools.missed.manager.adb
 
+import androidstudio.tools.missed.features.customcommand.model.CustomCommand
 import androidstudio.tools.missed.manager.adb.logger.AdbLogger
-import androidstudio.tools.missed.manager.device.model.toDeviceInformation
+import androidstudio.tools.missed.manager.device.model.Device
 import androidstudio.tools.missed.manager.resource.ResourceManager
-import com.android.ddmlib.AndroidDebugBridge
-import com.android.ddmlib.IDevice
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.unmockkAll
-import io.mockk.verify
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import io.ktor.utils.io.core.*
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
+import org.jetbrains.android.sdk.AndroidSdkUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
+import java.io.File
 
 class AdbManagerImplTest {
 
-    private val mockADB: AndroidDebugBridge = mockk(relaxed = true)
     private val mockAdbLogger: AdbLogger = mockk(relaxed = true)
     private val mockResourceManager: ResourceManager = mockk(relaxed = true)
 
-    private lateinit var adbManager: AdbManager
+    private lateinit var adbManager: AdbManagerImpl
 
     @Before
     fun setUp() {
         adbManager = AdbManagerImpl(
-            androidDebugBridge = mockADB,
             adbLogger = mockAdbLogger,
             resourceManager = mockResourceManager
         )
@@ -39,8 +40,16 @@ class AdbManagerImplTest {
     @Test
     fun `initialAdb() should return success if connected to ADB`() = runTest {
         // Arrange
-        every { mockADB.isConnected } returns true
-        every { mockADB.hasInitialDeviceList() } returns true
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File("ADB PATH"),
+            emptyList<String>()
+        )
 
         // Act
         val result = adbManager.initialAdb()
@@ -48,14 +57,18 @@ class AdbManagerImplTest {
         // Assert
         assert(result.isSuccess)
         assert(result.getOrNull() == true)
-        verify(exactly = 2) { mockADB.isConnected }
-        verify(exactly = 2) { mockADB.hasInitialDeviceList() }
     }
 
     @Test
-    fun `initialAdb() should return failure if not connected to ADB`() = runTest {
+    fun `initialAdb() should return failure if not found the ADB path`() = runTest {
         // Arrange
-        every { mockADB.isConnected } returns false
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(null, emptyList<String>())
 
         // Act
         val result = adbManager.initialAdb()
@@ -63,72 +76,224 @@ class AdbManagerImplTest {
         // Assert
         assert(result.isFailure)
         assert(result.exceptionOrNull()?.message == mockResourceManager.string("adbConnectionIssue"))
-        verify(exactly = 11) { mockADB.isConnected }
     }
 
+
     @Test
-    fun `initialAdb() should return failure if initial device list retrieval fails`() = runTest {
+    fun `getDevices() should return success if found the ADB path`() = runTest {
         // Arrange
-        every { mockADB.isConnected } returns true
-        every { mockADB.hasInitialDeviceList() } returns false
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File("ADB PATH"),
+            emptyList<String>()
+        )
+
+        // Mock Runtime class and its methods
+        mockkStatic(Runtime::class)
+        // Mock input stream, error stream, and process
+        val inputStream = ByteArrayInputStream(
+            ("List of devices attached\n" +
+                    "ce0516056bcc220e05\tdevice\n" +
+                    "emulator-5554\tdevice").toByteArray()
+        )
+        val errorStream = ByteArrayInputStream("".toByteArray())
+        val process = mockk<Process>(relaxed = true)
+        every { process.inputStream } returns inputStream
+        every { process.errorStream } returns errorStream
+
+        // Mock Runtime.getRuntime().exec() to return our process
+        every { Runtime.getRuntime().exec(any<String>()) } returns process
+
+        // Mock BufferedReader
+        mockkConstructor(BufferedReader::class)
+        every { anyConstructed<BufferedReader>().readLine() } returnsMany listOf(
+            "List of devices attached",
+            "ce0516056bcc220e05\tdevice",
+            "emulator-5554\tdevice",
+            null
+        )
+
 
         // Act
         val result = adbManager.initialAdb()
+        val devices = adbManager.getDevices()
 
         // Assert
-        assert(result.isFailure)
-        assert(result.exceptionOrNull()?.message == mockResourceManager.string("getDevicesFromAdbError"))
-        verify(exactly = 2) { mockADB.isConnected }
-        verify(exactly = 11) { mockADB.hasInitialDeviceList() }
-    }
-
-    @Test
-    fun `getDevices() should return success with device list if ADB is initialized`() = runTest {
-        // Arrange
-        every { mockADB.isConnected } returns true
-        every { mockADB.hasInitialDeviceList() } returns true
-        val mockDevice1 = mockk<IDevice>(relaxed = true)
-        val mockDevice2 = mockk<IDevice>(relaxed = true)
-        val mockDevice3 = mockk<IDevice>(relaxed = true)
-        every { mockDevice1.getProperty("ro.product.brand") } returns "brand1"
-        every { mockDevice3.getProperty("ro.product.brand") } returns "brand3"
-        every { mockDevice1.getProperty("ro.product.model") } returns "model1"
-        every { mockDevice3.getProperty("ro.product.model") } returns "model3"
-        every { mockADB.devices } returns arrayOf(mockDevice1, mockDevice2, mockDevice3)
-        every { mockDevice1.isOnline } returns true
-        every { mockDevice2.isOnline } returns false
-        every { mockDevice3.isOnline } returns true
-        every { mockDevice1.serialNumber } returns "1"
-        every { mockDevice2.serialNumber } returns "2"
-        every { mockDevice3.serialNumber } returns "3"
-
-        // Act
-        val result = adbManager.getDevices()
-
         // Assert
         assert(result.isSuccess)
-        assert(result.getOrNull()?.size == 2)
-        assert(result.getOrNull()?.get(0)?.name == "BRAND1 MODEL1 [1]")
-        assert(result.getOrNull()?.get(1)?.name == "BRAND3 MODEL3 [3]")
-        verify(exactly = 1) { mockADB.devices }
-        verify(exactly = 1) { mockDevice1.isOnline }
-        verify(exactly = 1) { mockDevice2.isOnline }
-        verify(exactly = 1) { mockDevice3.isOnline }
-        verify(exactly = 1) { mockDevice1.toDeviceInformation() }
-        verify(exactly = 1) { mockDevice3.toDeviceInformation() }
+        assert(result.getOrNull() == true)
+        assert(devices.isSuccess)
+        assert(devices.getOrNull()?.size == 2)
     }
 
     @Test
-    fun `getDevices() should return failure if ADB is not initialized`() = runTest {
+    fun `getDevices() should return failure if not found the ADB path`() = runTest {
         // Arrange
-        every { mockADB.isConnected } returns false
-        every { mockADB.hasInitialDeviceList() } returns true
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            null,
+            emptyList<String>()
+        )
+
+        // Mock Runtime class and its methods
+        mockkStatic(Runtime::class)
+        // Mock input stream, error stream, and process
+        val inputStream = ByteArrayInputStream(
+            ("List of devices attached\n" +
+                    "ce0516056bcc220e05\tdevice\n" +
+                    "emulator-5554\tdevice").toByteArray()
+        )
+        val errorStream = ByteArrayInputStream("".toByteArray())
+        val process = mockk<Process>(relaxed = true)
+        every { process.inputStream } returns inputStream
+        every { process.errorStream } returns errorStream
+
+        // Mock Runtime.getRuntime().exec() to return our process
+        every { Runtime.getRuntime().exec(any<String>()) } returns process
+
+        // Mock BufferedReader
+        mockkConstructor(BufferedReader::class)
+        every { anyConstructed<BufferedReader>().readLine() } returnsMany listOf(
+            "List of devices attached",
+            "ce0516056bcc220e05\tdevice",
+            "emulator-5554\tdevice",
+            null
+        )
+
 
         // Act
-        val result = adbManager.getDevices()
+        val result = adbManager.initialAdb()
+        val devices = adbManager.getDevices()
 
         // Assert
         assert(result.isFailure)
-        assert(result.exceptionOrNull()?.message == mockResourceManager.string("adbIsNotInitialize"))
+        assert(devices.isFailure)
     }
+
+    @Test
+    fun `test run - success`() {
+        // Mock Runtime class and its methods
+        mockkStatic(Runtime::class)
+
+        // Mock input stream, error stream, and process
+        val inputStream = ByteArrayInputStream("output line 1\noutput line 2\n".toByteArray())
+        val errorStream = ByteArrayInputStream("".toByteArray())
+        val process = mockk<Process>(relaxed = true)
+        every { process.inputStream } returns inputStream
+        every { process.errorStream } returns errorStream
+
+
+        // Mock Runtime.getRuntime().exec() to return our process
+        every { Runtime.getRuntime().exec("some_command") } returns process
+
+        // Mock BufferedReader
+        mockkConstructor(BufferedReader::class)
+        every { anyConstructed<BufferedReader>().readLine() } returnsMany listOf("output line 1", "output line 2", null)
+
+        // Call the run function with a command
+        val result = adbManager.runtimeExec("some_command")
+
+        // Verify the result
+        assert(result.isSuccess)
+        assert(result.getOrNull() == "output line 1\noutput line 2\n")
+
+    }
+
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec`() = runTest {
+
+        // Arrange
+        val command = "ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        // Act
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec(command)
+        }
+
+    }
+
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec with adb path`() = runTest {
+
+        // Arrange
+        val command = "\$ADB ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        val adbPath = "/Users/User/Library/Android/sdk/platform-tools/adb"
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File(adbPath),
+            emptyList<String>()
+        )
+
+        // Act
+        adbManagerSpy.initialAdb()
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec("/Users/User/Library/Android/sdk/platform-tools/adb -s deviceId1 ls")
+        }
+    }
+
+    @Test
+    fun `executeCustomCommand should call runtimeExec with app id`() = runTest {
+
+        // Arrange
+        val command = "\$ADB \$APP_ID ls"
+        val packageId = "com.example.app"
+        val customCommand = CustomCommand(id = 123, index = 1, name = "customCommandTitle", description = "customCommandDescription", command = command)
+        val device = Device(name = "device1", id = "deviceId1")
+        val adbManagerSpy = spyk(AdbManagerImpl(mockResourceManager, mockAdbLogger))
+
+        val adbPath = "/Users/User/Library/Android/sdk/platform-tools/adb"
+        mockkStatic(ProjectManager::class)
+        mockkStatic(AndroidSdkUtils::class)
+        val projectManager = mockk<ProjectManager>(relaxed = true)
+        val projectMock = mockk<Project>(relaxed = true)
+        every { ProjectManager.getInstance() } returns projectManager
+        every { projectManager.openProjects } returns arrayOf(projectMock)
+        every { AndroidSdkUtils.findAdb(any()) } returns AndroidSdkUtils.AdbSearchResult(
+            File(adbPath),
+            emptyList<String>()
+        )
+
+        // Act
+        adbManagerSpy.initialAdb()
+        adbManagerSpy.executeCustomCommand(device = device, packageId = packageId, customCommand)
+
+        // Verify the result
+        verify {
+            adbManagerSpy.runtimeExec("/Users/User/Library/Android/sdk/platform-tools/adb -s deviceId1 $packageId ls")
+        }
+    }
+
+
 }

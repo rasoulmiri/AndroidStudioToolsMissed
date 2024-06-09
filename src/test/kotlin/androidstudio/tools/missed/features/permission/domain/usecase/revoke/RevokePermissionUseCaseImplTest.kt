@@ -78,7 +78,13 @@ class RevokePermissionUseCaseImplTest {
                 error("Unexpected command")
             }
         }
-        coEvery { mockResourceManager.string("successRevokeDescription", permission.name, packageId) } returns successText
+        coEvery {
+            mockResourceManager.string(
+                "successRevokeDescription",
+                permission.name,
+                packageId
+            )
+        } returns successText
 
         // Act
         val result = useCase.invoke(permission).single()
@@ -109,7 +115,14 @@ class RevokePermissionUseCaseImplTest {
                 error("Unexpected command")
             }
         }
-        coEvery { mockResourceManager.string("failedRevokeDescription", permission.name, packageId, errorMessage) } returns errorText
+        coEvery {
+            mockResourceManager.string(
+                "failedRevokeDescription",
+                permission.name,
+                packageId,
+                errorMessage
+            )
+        } returns errorText
 
         // Act
         val actualErrorMessage = useCase.invoke(permission).single().exceptionOrNull()?.message

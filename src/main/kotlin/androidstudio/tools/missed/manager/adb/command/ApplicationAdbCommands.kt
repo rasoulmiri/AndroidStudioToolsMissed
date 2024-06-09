@@ -6,4 +6,9 @@ class ApplicationAdbCommands {
         command = "am start \$(cmd package resolve-activity --brief $packageId | tail -n 1)",
         successResult = SuccessResultEnum.NOT_EMPTY
     )
+
+    class Install(private val packageFilePath: String) : AdbCommand(
+        command = "install $packageFilePath",
+        successResult = SuccessResultEnum.NOT_EMPTY
+    )
 }

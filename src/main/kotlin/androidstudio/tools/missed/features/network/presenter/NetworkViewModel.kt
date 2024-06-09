@@ -175,7 +175,7 @@ class NetworkViewModel(
     private fun getBluetoothState() = viewModelScope.launch {
         getBluetoothStateUseCase.invoke().collect { result ->
             result.onSuccess {
-                _bluetoothStateFlow.emit(false)
+                _bluetoothStateFlow.emit(it)
             }.onFailure {
                 _messageSharedFlow.emit(
                     BalloonNotificationModel(
