@@ -19,7 +19,7 @@ https://github.com/rasoulmiri/AndroidStudioToolsMissed/assets/11883977/68a7aaed-
 | **Battery**             | Check charger connection, battery level, and power saving mode                                       |
 
 >### Custom Command 
->This feature allows you to execute your own shell commands directly from within Android Studio! Whether you need to automate routine tasks, integrate specific workflows, or just run custom scripts, this feature has you covered.
+>This feature allows you to execute your own shell commands directly from within Android Studio! Whether you need to automate routine tasks, integrate specific workflows, or just run custom scripts, this feature has you covered.\
 ![CustomCommand](https://github.com/rasoulmiri/AndroidStudioToolsMissed/assets/11883977/c0c54f5c-6934-494f-9434-934037241148)
 
 >### Network
