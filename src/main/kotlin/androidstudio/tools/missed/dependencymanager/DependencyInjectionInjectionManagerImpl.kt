@@ -1,11 +1,11 @@
 package androidstudio.tools.missed.dependencymanager
 
-import androidstudio.tools.missed.features.apk.di.apkModule
+import androidstudio.tools.missed.features.apkmanagement.di.apkManagementModule
 import androidstudio.tools.missed.features.battery.di.batteryModule
 import androidstudio.tools.missed.features.customcommand.di.customCommandModule
 import androidstudio.tools.missed.features.deviceAndpackageid.di.deviceAndPackageIdsModule
-import androidstudio.tools.missed.features.dozeandstandby.di.dozeAndStandbyModule
 import androidstudio.tools.missed.features.input.di.inputModule
+import androidstudio.tools.missed.features.limitationmodes.di.limitationModesModule
 import androidstudio.tools.missed.features.network.di.networkModule
 import androidstudio.tools.missed.features.permission.di.permissionModule
 import androidstudio.tools.missed.manager.adb.di.adbManagerModule
@@ -36,9 +36,9 @@ class DependencyInjectionInjectionManagerImpl : KoinComponent, DependencyInjecti
                     inputModule +
                     networkModule +
                     permissionModule +
-                    apkModule +
+                    apkManagementModule +
                     batteryModule +
-                    dozeAndStandbyModule
+                    limitationModesModule
             )
         }
     }

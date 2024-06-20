@@ -55,7 +55,7 @@ class CustomCommandView(
                 text(resourceManager.string("customCommandDescription")).gap(RightGap.SMALL)
                 browserLink(
                     resourceManager.string("help"),
-                    "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Input-Tools"
+                    "https://github.com/rasoulmiri/AndroidStudioToolsMissed/wiki/Custom-Command-Demo"
                 )
             }
 

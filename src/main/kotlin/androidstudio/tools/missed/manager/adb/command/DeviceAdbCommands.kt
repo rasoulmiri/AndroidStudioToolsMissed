@@ -42,5 +42,4 @@ class DeviceAdbCommands {
         isNeedPackageId = false,
         successResult = SuccessResultEnum.EMPTY
     )
-
 }
