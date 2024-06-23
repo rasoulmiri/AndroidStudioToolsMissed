@@ -16,7 +16,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val missedToolsWindowModule = module {
-    single { MissedToolsWindowViewModel(get(named("IODispatcher")), get()) }
+    single { MissedToolsWindowViewModel(get(named("IODispatcher")), get(),get()) }
     factory<CollapsibleGroupView<*>>(named("customCommandView")) { CustomCommandView(get(), get(), get()) }
     factory<CollapsibleGroupView<*>>(named("networkView")) { NetworkView(get(), get(), get()) }
     factory<CollapsibleGroupView<*>>(named("inputTextView")) { InputTextView(get(), get(), get()) }

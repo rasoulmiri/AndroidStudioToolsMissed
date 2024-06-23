@@ -3,6 +3,7 @@ package androidstudio.tools.missed.missedtoolwindow.presenter
 import androidstudio.tools.missed.base.ViewModel
 import androidstudio.tools.missed.manager.device.DeviceManager
 import androidstudio.tools.missed.manager.notification.model.BalloonNotificationModel
+import androidstudio.tools.missed.manager.resource.ResourceManager
 import androidstudio.tools.missed.missedtoolwindow.model.MissedToolsWindowStateUi
 import com.intellij.notification.NotificationType
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class MissedToolsWindowViewModel(
     private val coroutineDispatcher: CoroutineDispatcher,
+    private val resourceManager: ResourceManager,
     private val deviceManager: DeviceManager
 ) : ViewModel(coroutineDispatcher) {
 
@@ -59,7 +61,12 @@ class MissedToolsWindowViewModel(
                 _messageSharedFlow.emit(
                     BalloonNotificationModel(content = it.message, type = NotificationType.ERROR)
                 )
-                _uiStateFlow.emit(MissedToolsWindowStateUi.Error)
+
+                if (it.message == resourceManager.string("connectAnAndroidDevice")) {
+                    _uiStateFlow.emit(MissedToolsWindowStateUi.NeedToConnectDevice)
+                } else {
+                    _uiStateFlow.emit(MissedToolsWindowStateUi.Error)
+                }
             }
         }
     }

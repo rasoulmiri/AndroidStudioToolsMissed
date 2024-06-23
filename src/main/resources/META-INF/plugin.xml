@@ -4,38 +4,18 @@
     <vendor email="miri.rasoul@gmail.com" url="miri.rasoul@gmail.com">Rasoul Miri</vendor>
 
     <description>
-        <![CDATA[<p>You can use AndroidStudioToolsMissed plugin during the development of Android applications, such as granting and revoking all permissions and activating and deactivating Wi-Fi, cellular mobile, Bluetooth, or Airplane mode
-<br>You can also set the Doze mode, Standby, and whitelist, or you can simulate the battery settings.</p>
-<p><strong style="color: blue;">All these features are available for emulators and real Android devices.</strong></p>
-
-<strong>Features:</strong>
+        <![CDATA[
+<p>The AndroidStudioToolsMissed plugin enhances Android application development by providing tools to manage device settings and permissions. With this plugin, you can:</p>
 <ul>
-  <li><strong>Network</strong>
-    <ul>
-      <li>Airplane Mode</li>
-      <li>Mobile Cellular</li>
-      <li>Wifi Connection</li>
-      <li>Bluetooth</li>
-    </ul>
-  </li>
-  <li><strong>Input Text:</strong> You can send your text to an Android device.</li>
-  <li><strong>Permissions:</strong> You can grant or revoke permission or all permissions for an application.</li>
-  <li><strong>APK:</strong> Get Apk from which is installed on your device or install APK on a device.</li>
-  <li><strong>Limitation Modes</strong>
-    <ul>
-      <li>Doze Mode</li>
-      <li>Standby</li>
-      <li>WhiteList</li>
-    </ul>
-  </li>
-  <li><strong>Battery</strong>
-  <ul>
-  <li>Charger Connection</li>
-  <li>Battery Level</li>
-  <li>Power Saving Mode</li>
-   </ul>
-  </li>
+  <li><strong style="color: orange;">Custom Command:</strong> Execute custom shell commands directly from Android Studio.</li>
+  <li><strong style="color: orange;">Network:</strong> Manage network settings like Airplane Mode, Mobile Cellular, WiFi, and Bluetooth.</li>
+  <li><strong style="color: orange;">Input Text:</strong> Send text to your Android device.</li>
+  <li><strong style="color: orange;">Permissions:</strong> Grant or revoke permissions easily.</li>
+  <li><strong style="color: orange;">APK Management:</strong> Extract and install APKs from/to your device.</li>
+  <li><strong style="color: orange;">Limitation Modes:</strong> Control Doze Mode, Standby Mode, and WhiteList.</li>
+  <li><strong style="color: orange;">Battery:</strong> Check charger connection, battery level, and power saving mode.</li>
 </ul>
+<p><strong>Use these features on both emulators and real devices to streamline your testing and development process.</strong></p>
 ]]>
     </description>
 
