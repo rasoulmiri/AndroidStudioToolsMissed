@@ -42,7 +42,7 @@ class DeviceManagerImpl(
         val resultGetDevice = getDevicesFromAdb()
         if (resultGetDevice.isFailure) {
             return Result.failure(
-                resultInitialAdb.exceptionOrNull() ?: Throwable(resourceManager.string("getDevicesFromAdbError"))
+                resultGetDevice.exceptionOrNull() ?: Throwable(resourceManager.string("getDevicesFromAdbError"))
             )
         }
 
@@ -71,7 +71,9 @@ class DeviceManagerImpl(
             _selectedDeviceStateFlow.emit(_devicesStateFlow.value.getOrNull(0))
             Result.success(true)
         } else {
-            Result.failure(Throwable(resourceManager.string("getDevicesFromAdbError")))
+            Result.failure(
+                resultGetDevices.exceptionOrNull() ?: Throwable(resourceManager.string("getDevicesFromAdbError"))
+            )
         }
     }
 

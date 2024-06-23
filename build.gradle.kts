@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.androidstudiotoolsmissed"
-version = "1.0.4-SNAPSHOT"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -85,6 +85,7 @@ tasks {
             properties.load(inputStream)
         }
         val intelliJToken: String = properties.getProperty("token").trim()
+        println(intelliJToken)
         token.set(System.getenv(intelliJToken))
     }
 }
